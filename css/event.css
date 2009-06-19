@@ -69,6 +69,10 @@ body, p, ol, ul, td {
   font-size: 90%;
 }
 
+#checkpoints .link {
+  text-decoration: none;
+}
+
 /*************************************** RESULTS *********************************/
 
 
@@ -77,6 +81,10 @@ body, p, ol, ul, td {
 
 #results {
   padding-top: 1em;
+}
+
+#results .link {
+  text-decoration: none;
 }
 
 span.cat_name{
