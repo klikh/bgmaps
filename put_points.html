@@ -1,0 +1,100 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+  <title>День в городе 2009 — карта и маршруты</title>
+   <link href="main.css" rel="stylesheet" type="text/css" /> 
+  
+  <script src="http://maps.google.com/maps?file=api&amp;v=2&amp;sensor=true_or_false&amp;key=ABQIAAAA4iMT6e1cHfPMjMaFvdWPWBT2yXp_ZAY8_ufC3CFXhHIE1NvwkxReuuQ4S6Yz3mjkKpgvXdDE_znDqQ" type="text/javascript"></script>
+  
+  <script type="text/javascript">
+  
+    var MAP;
+    var MARKER;
+    var startPoint = new GLatLng(59.95,30.3166667);
+  
+    function initialize() {
+      initMap();
+    }
+
+    function initMap() {
+      MAP = new GMap2(document.getElementById("map"));
+      MAP.setUIToDefault();
+      MAP.setMapType(G_NORMAL_MAP);
+      MAP.setCenter(startPoint, 16);
+      showAddress('Петропавловкая крепость');
+    }
+    
+    var geocoder = new GClientGeocoder();
+    
+    function showAddress(address) {
+      if (MARKER) { MAP.removeOverlay(MARKER); }
+      geocoder.getLatLng(
+        address,
+        function(point) {
+          if (!point) {
+            alert("\"" + address + "\" not found");
+          } else {
+            MAP.setCenter(point, 16);
+            MARKER = new GMarker(point, {draggable: true});
+            
+            GEvent.addListener(MARKER, "dragend", function() {
+              appendResult(MARKER);
+            });
+                    
+            MAP.addOverlay(MARKER);
+            appendResult(MARKER);
+          }
+        }
+      );
+      return false;
+    }
+    
+    function appendResult(marker) {
+      var id = 'cp_' + document.getElementById('input_id').value;
+      if (!document.getElementById(id)) {
+        document.getElementById('coordinates').innerHTML += '<div id="' + id + '"></div>';
+      }
+      writeResult(marker.getPoint().lat(),  marker.getPoint().lng(), id);
+    }
+    
+    function writeResult(lat, lng, id) {
+      var s = '{ "id": ' + document.getElementById('input_id').value + ',<br/>';
+      s += '"name": "' + document.getElementById('input_name').value + '",<br/>';
+      s += '"task": "' + document.getElementById('input_task').value + '",<br/>';
+      s += '"coordinates": [' + lat + "," + lng + "]";
+      s += ' }, <br/>';
+      document.getElementById(id).innerHTML = s;
+    }
+    
+    function updateResult() {
+      var curID = 'cp_' + document.getElementById('input_id').value;
+      writeResult(MARKER.getPoint().lat(), MARKER.getPoint().lng(), curID);
+    }
+    
+  </script>
+  
+</head>
+
+<body onload="initialize()" onunload="GUnload()">
+
+<div id="content">
+    <div id="left_panel">
+      <form onsubmit="return showAddress(document.getElementById('input_address').value)">
+        ID: <input type="text" id="input_id" /><br/>
+        NAME: <input type="text" id="input_name" onKeyUp="document.getElementById('input_address').value = document.getElementById('input_name').value" /><br/>
+        ADDRESS: <input type="text" id="input_address" /><br/>
+        TASK: <input type="text" id="input_task" /><br/>
+        <input type="submit" value="Find" />
+        <input type="button" value="Update" onclick="updateResult();"/>
+      </form>
+      <div id="coordinates"></div>
+    </div> 
+    
+    <div id="map_wrapper">
+      <div id="map"></div>
+    </div>
+  </div>
+</body>
+</html>

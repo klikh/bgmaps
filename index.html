@@ -1,0 +1,56 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+  <title>День в городе 2009 — карта и маршруты</title>
+  <link href="main.css" rel="stylesheet" type="text/css" />
+
+<!-- JAVASCRIPTS_BEGIN -->
+  <script src="points.js" type="text/javascript"></script>
+  <script src="results.js" type="text/javascript"></script>
+  <script src="util.js" type="text/javascript"></script>
+  <script src="http://maps.google.com/maps?file=api&amp;v=2&amp;sensor=false&amp;key=ABQIAAAA4iMT6e1cHfPMjMaFvdWPWBT2yXp_ZAY8_ufC3CFXhHIE1NvwkxReuuQ4S6Yz3mjkKpgvXdDE_znDqQ" type="text/javascript"></script>
+  <script src="bdccArrowedPolyline.js" type="text/javascript"></script>
+  <script src="labeledmarker.js" type="text/javascript"></script>
+  <script src="main.js" type="text/javascript"></script>
+<!-- JAVASCRIPTS_END -->
+</head>
+
+<body onload="initialize()" onunload="GUnload()">
+  
+  <div id="all">
+  
+    <div id="header">
+      <h1>День в городе 2009</h1>
+      <h2>Маршруты и КП</h2>
+      <div id="made_by">
+        Made by <a href="http://explosion-team.atque.ru">Explosion Team</a>
+      </div>
+
+    </div>
+
+    <div id="content">
+      <div id="left_panel">
+        <div id="points_container">
+          <h2>Все КП</h2>
+          <span class="show_hide">
+            <a href="#" id="points_hide" onclick="changeVisibility('points', 'points_hide')"></a>
+          </span>
+          <div id="points"></div>
+        </div>
+      
+        <div id="teams_container">
+        <h2>Маршруты команд</h2>
+          <div id="teams"></div>
+        </div>
+      </div> 
+    
+      <div id="map_wrapper">
+        <div id="map"></div>
+      </div>
+    </div>
+    
+  </div>
+</body>
+</html>

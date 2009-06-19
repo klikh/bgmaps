@@ -1,0 +1,168 @@
+* {
+  padding: 0;
+  margin: 0;
+  font-family: verdana, arial, helvetica, sans-serif;
+}
+
+a:visited {
+  color: blue;
+}
+
+body, p, ol, ul, td {
+  font-size:   13px;
+}
+
+body {
+  background: #EEE6CC;
+}
+
+#all {
+}
+
+#header {
+  text-align: center;
+}
+
+#made_by {
+  float: right;
+  position: absolute;
+  top: 1em;
+  right: 1em;
+}
+
+#content {
+  position: absolute;
+  height: 90%;
+  left: 0;
+  right: 0;
+}
+
+#left_panel {
+  float: left;
+  width: 30%;
+  overflow: auto;
+  margin: 10px;
+  position: absolute;
+}
+
+#map_wrapper {
+  display: none;
+  width: 65%;
+  float: right;
+  overflow:hidden;  
+  margin: 10px;
+  height: 100%;
+}
+
+#map {
+  width: 100%;
+  min-height: 500px;
+  height: 100%;
+}
+
+/* IE-specific hack */
+* html #map {
+  height: 600px;
+}
+
+#made_by {
+  text-align: right;
+}
+
+#points_container {
+  padding: 1em;
+  border: 1px solid #DDAA66;
+}
+
+#points_container h2 {
+  margin-bottom: 0.5em;
+}
+
+#points {
+  padding: 0.5em;
+  margin-top: 0.5em;
+}
+
+#teams_container {
+  margin-top: 1em;
+  padding: 1em;
+  border: 1px solid #DDAA66;
+}
+
+#teams {
+  padding-top: 1em;
+}
+
+li {
+  list-style-type: none;
+}
+
+span.cat_name{
+  font-weight: bold;
+}
+
+.cat_results {
+  display: none;
+  margin-right: 1em;
+  margin-top: 1em;
+  padding: 0.5em;
+}
+
+.cat_results table {
+  border-collapse: collapse;
+}
+
+.cat_results th {
+  padding-bottom: 0.5em;
+}
+
+.cat_results td {
+  border: 1px dotted #DDAA66;
+}
+
+.cat_results td.place {
+  padding: 0 0.5em 0 0.5em;
+  text-align: right;
+}
+
+.cat_results td.points {
+  text-align: center;
+}
+
+.results_table {
+}
+
+.no_points {
+  font-weight: bold;
+  color: red;
+}
+
+.show_hide {
+  font-size: 90%;
+  color: blue;
+  text-decoration: underline;
+}
+
+div.info {
+  width: 250px;
+}
+div.info_id {
+  float: left;
+  width: 20%;
+  font-size: 150%;
+  margin-top: 1em;
+}
+div.info_name {
+  width: 80%;
+  float: right;
+  font-weight: bold;
+}
+div.info_task {
+  width: 80%;
+  float: right;
+}
+
+.markerLabel {
+  color: black;
+  font-size: 8pt;
+}

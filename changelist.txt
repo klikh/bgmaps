@@ -1,0 +1,11 @@
+=== 1.0.1 ===
+* Exchanged checkpoints 33 and 30 in results due to an error in official results.
+* Changed checkpoint 87 to 88 in teams results due to an error in official results.
+* Changed checkpoint 96 to 98 in the result of team #256 in "Beg Pro" due to an error in official results.
+* Fixed coordinates of checkpoint 20.
+* Added place number column in resuls tables.
+
+=== 1.0 ===
+First release.
+Officially presented at http://www.runcity.ru/forum_new/index.php?topic=11741
+* Map with all
