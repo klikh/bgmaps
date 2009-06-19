@@ -5,6 +5,7 @@
   'name': 'Ночь в Городе — Пушкин 2009' }
 ];
 
+var DEFAULT_EVENT_KEY = 'dvg2009';
 
 function getEventByKey(key) {
   for (var i = 0; i < EVENTS.length; i++) {

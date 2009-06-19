@@ -1,6 +1,7 @@
 function loadEvent(event) {
   if (!getEventByKey(event)) {
-    alert('No event with codename ' + event);
+    event = DEFAULT_EVENT_KEY;
+    document.location.hash = '#' + event;
   }
   
   changeHeader(event);
@@ -25,7 +26,9 @@ function clearAll() {
 }
 
 function changeHeader(page) {
-  $('#header h1').html(getEventByKey(page).name);
+  var name = getEventByKey(page).name;
+  $('#header h1').html(name);
+  document.title = getEventByKey(page).name;
 }
 
 function loadCheckpoints(event) {
