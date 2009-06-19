@@ -1,11 +1,21 @@
+=== 2.0 ===
+"Multiple events"
+* Added support for multiple events (i.e. contests). All events are handled by single page event.html with event name parameter. User can switch between events using the list of them. On event select all checkpoints and results are dynamically loaded from JSON and placed on the page and on the map.
+* Added index.html page (previous index.html is now event.html) - completely static, just displaying the list of events with links to them.
+* Added information from "Night in the City Pushkin 2009" event. Unlike the "Day in the city", all checkpoints are parsed from runcity.ru, all GPS coordinates are given by the runcity team.
+* Completely refactored the code. Attached jQuery 1.3.2 lib.
+* Added a couple of sliding effects.
+
 === 1.0.1 ===
 * Exchanged checkpoints 33 and 30 in results due to an error in official results.
 * Changed checkpoint 87 to 88 in teams results due to an error in official results.
-* Changed checkpoint 96 to 98 in the result of team #256 in "Beg Pro" due to an error in official results.
+* Changed checkpoint 96 to 98 in the result of team #256 in "Run Pro" due to an error in official results.
 * Fixed coordinates of checkpoint 20.
 * Added place number column in resuls tables.
 
 === 1.0 ===
-First release.
+"First release"
 Officially presented at http://www.runcity.ru/forum_new/index.php?topic=11741
-* Map with all
+* Map for "Day in the City 2009" event. 
+* All checkpoints are placed on the map as markers. The list of all checkpoints is available in the left panel. Click on a checkpoint either in the list or on the map invokes a bubble window with checkpoint address and task.
+* All teams results are available in the box to the left of the map, grouped by categories. Clicking on a category shows results in this category as a sorted table with name, place and collected points. Click on the command to see its route on the map. By route we mean all team's checkpoints connected in the order of taking them.

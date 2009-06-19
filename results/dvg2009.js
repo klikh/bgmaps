@@ -1,4 +1,4 @@
-var RESULTS = [
+[
 { 'category': 'Бег Лайт',
 'teams' : [
 { 

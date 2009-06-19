@@ -1,41 +1,8 @@
-* {
-  padding: 0;
-  margin: 0;
-  font-family: verdana, arial, helvetica, sans-serif;
-}
-
-a:visited {
-  color: blue;
-}
-
 body, p, ol, ul, td {
   font-size:   13px;
 }
 
-body {
-  background: #EEE6CC;
-}
-
-#all {
-}
-
-#header {
-  text-align: center;
-}
-
-#made_by {
-  float: right;
-  position: absolute;
-  top: 1em;
-  right: 1em;
-}
-
-#content {
-  position: absolute;
-  height: 90%;
-  left: 0;
-  right: 0;
-}
+/*************************************** LAYOUT *********************************/
 
 #left_panel {
   float: left;
@@ -46,7 +13,6 @@ body {
 }
 
 #map_wrapper {
-  display: none;
   width: 65%;
   float: right;
   overflow:hidden;  
@@ -65,36 +31,52 @@ body {
   height: 600px;
 }
 
-#made_by {
-  text-align: right;
+#header #copyright {
+  position: absolute;
+  top: 1em;
+  right: 1em;
 }
 
-#points_container {
-  padding: 1em;
-  border: 1px solid #DDAA66;
-}
+/*************************************** EVENTS *********************************/
 
-#points_container h2 {
+#events_wrapper h2 {
   margin-bottom: 0.5em;
 }
 
-#points {
+#events {
+  display: none;
+}
+
+/*************************************** CHECKPOINTS *********************************/
+
+#checkpoints_wrapper {
+}
+
+#checkpoints_wrapper h2 {
+  margin-bottom: 0.5em;
+}
+
+#show_checkpoints {
+  font-size: 90%;
+  color: blue;
+  text-decoration: underline;
+}
+
+#checkpoints {
+  display: none;
   padding: 0.5em;
   margin-top: 0.5em;
+  font-size: 90%;
 }
 
-#teams_container {
-  margin-top: 1em;
-  padding: 1em;
-  border: 1px solid #DDAA66;
+/*************************************** RESULTS *********************************/
+
+
+#results_wrapper {
 }
 
-#teams {
+#results {
   padding-top: 1em;
-}
-
-li {
-  list-style-type: none;
 }
 
 span.cat_name{
@@ -118,6 +100,7 @@ span.cat_name{
 
 .cat_results td {
   border: 1px dotted #DDAA66;
+  font-size: 90%;
 }
 
 .cat_results td.place {
@@ -129,19 +112,13 @@ span.cat_name{
   text-align: center;
 }
 
-.results_table {
-}
-
 .no_points {
   font-weight: bold;
   color: red;
 }
 
-.show_hide {
-  font-size: 90%;
-  color: blue;
-  text-decoration: underline;
-}
+/*************************************** MARKER INFO *********************************/
+
 
 div.info {
   width: 250px;

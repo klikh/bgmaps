@@ -1,21 +1,8 @@
-var MAP;
-var MARKERS = [];
-var POLYLINE;
-var START_POINT = new GLatLng(POINTS[0].coordinates[0], POINTS[0].coordinates[1]);
-
-function initialize() {
-  initMap();
-  setPointsOnMap();
-  printPoints();
-  printResults();
-  setVisible('points', false, 'points_hide');
-}
-
-function initMap() {
-  MAP = new GMap2($("map"));
+﻿function initMap() {
+  MAP = new GMap2(document.getElementById("map"));
   MAP.setUIToDefault();
   MAP.setMapType(G_NORMAL_MAP);
-  MAP.setCenter(START_POINT, 12);
+  MARKERS = [];
 }
 
 function getInfoHtmlWindow(point) {
@@ -24,12 +11,13 @@ function getInfoHtmlWindow(point) {
 
 function setPointsOnMap() {
   //start point
-  var startIcon = new GIcon(G_DEFAULT_ICON, "start.png");
+  START_POINT = new GLatLng(POINTS[0].coordinates[0], POINTS[0].coordinates[1]);
+  var startIcon = new GIcon(G_DEFAULT_ICON, "img/start.png");
   var marker = new GMarker(START_POINT, startIcon);
   putPointMarkerOnMap(marker, POINTS[0]);
   
   //other points
-  var pointIcon = new GIcon(G_DEFAULT_ICON, "cleanmarker.png");
+  var pointIcon = new GIcon(G_DEFAULT_ICON, "img/cleanmarker.png");
   var maxLat = POINTS[0].coordinates[0];
   var maxLng = POINTS[0].coordinates[1];
   var minLat = POINTS[0].coordinates[0];
@@ -46,7 +34,6 @@ function setPointsOnMap() {
         labelOffset:labelOffset };
     var marker = new LabeledMarker(point, markerOptions);
     putPointMarkerOnMap(marker, POINTS[i]);
-    
     
     maxLat = Math.max(maxLat, point.lat());
     maxLng = Math.max(maxLng, point.lng());
@@ -79,44 +66,6 @@ function showInfo(i) {
   MAP.setCenter(MARKERS[i].getPoint());
 }
 
-function printPoints() {
-  panel = $("points");
-  panel.innerHTML += '<ul>';
-  for (var i = 0; i < POINTS.length; i++) {
-    id = POINTS[i].id;
-    cpid = 'cp_' + id;
-    panel.innerHTML += '<li><a id="' + cpid + '" href="#" onclick="showInfo(' + i + ')">' + id + '-' + POINTS[i].name + '</li>';
-   }
-  panel.innerHTML += '</ul>';
-}
-
-// Get results from results.js and display them for all categories in initially hidden tables.
-function printResults() {
-  var html = "<ul>"
-  for (var i = 0; i < RESULTS.length; i++) {
-    res = RESULTS[i];
-    catid = 'cat_' + i;
-    
-    html += '<li class="cat_name"><a href="#" onclick="changeVisibility(\'' + catid + '\')">';
-    html += '<span class="cat_name">' + res.category + '</span>';
-    html += '</a>';
-    html += '<div id="' + catid + '" class="cat_results">';
-    html += '<table class="results_table"><th>#</th><th>Команда</th><th>Очки</th><th>Время</th>';
-    for (var j = 0; j < res.teams.length; j++) {
-      var t = res.teams[j];
-      var title = '';
-      if (resultHasUndefinedCheckpoint(t.checkpoints)) {
-        title += '<strong class="no_points">!</strong> '
-      }
-      title +=  '<a href="#" onclick="showRoute([' + t.checkpoints + ']);">' + t.title + '</a>';
-      html += '<tr>' + '<td class="place">' + j + '</td>' + swtag(title, 'td') + '<td class="points">' + t.count + '</td>' + swtag(t.time, 'td') + '</tr>';
-    }
-    html += '</table></div></li>';
-  }
-  html += "</ul>"
-  $('teams').innerHTML += html;
-}
-
 function showRoute(checkpoints) {
   if (POLYLINE) {
     MAP.removeOverlay(POLYLINE);
@@ -147,19 +96,12 @@ function showRoute(checkpoints) {
   highlightMapRegion(new GLatLng(minLat, minLng), new GLatLng(maxLat, maxLng));
 }
 
-function resultHasUndefinedCheckpoint(checkpoints) {
-  for (var i in checkpoints) {
-    if (!findPointById(checkpoints[i])) {
-      return true;
-    }
+function clearMap() {
+  if (POLYLINE) {
+    MAP.removeOverlay(POLYLINE);
   }
-  return false;
-}
-
-function findPointById(id) {
-  for (var i in POINTS) {
-    if (POINTS[i].id == id) {
-      return POINTS[i];
-    }
+  for (var i = 0; i < MARKERS.length; i++) {
+    MAP.removeOverlay(MARKERS[i]);
   }
+  MARKERS = [];
 }
