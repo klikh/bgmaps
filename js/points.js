@@ -1,16 +1,21 @@
 ﻿function printPoints() {
-  panel = document.getElementById("checkpoints");
-  panel.innerHTML += '<ul>';
+  var table = $('<table/>').addClass('results');
   for (var i = 0; i < POINTS.length; i++) {
-    id = POINTS[i].id;
-    cpid = 'cp_' + id;
-    panel.innerHTML += '<li><span id="' + cpid + '" class="link" onclick="showInfo(' + i + ')">' + id + '-' + POINTS[i].name + '</span></li>';
-   }
-  panel.innerHTML += '</ul>';
+    printPoint(i, table);
+  }
+  $('#checkpoints').append(table);
+}
+
+function printPoint(i, table) {
+  $('<tr/>')
+    .append($('<td/>').text(POINTS[i].id))
+    .append($('<td/>').addClass('link').click(function() { showInfo(i); })
+      .html(POINTS[i].name) )
+    .appendTo(table);
 }
 
 function printResults() {
-  var list = $('<ul></ul>');
+  var list = $('<ul/>');
   for (var i = 0; i < RESULTS.length; i++) {
     list.append(printCategoryResults(i));
   }
@@ -21,31 +26,37 @@ function printResults() {
 function printCategoryResults(i) {
   var res = RESULTS[i];
 
-  var li = $('<li class="cat_name"></li>');
-  var a = $('<span class="link"></span>');
-  a.click(function() {
-    $('#cat_' + i).slideToggle();
-  });
-  a.append('<span class="cat_name">' + res.category + '</span>');
-  li.append(a);
-  var results = $('<div id="cat_' + i + '" class="cat_results">');
-  results.html(html);
+  var li = $('<li class="cat_name"></li>')
+    .append($('<span/>').addClass('link').addClass('cat_name')
+      .click(function() { $('#cat_' + i).slideToggle(); })
+      .text(res.category));
   
-  var html = '<table><th>#</th><th>Команда</th><th>Очки</th><th>Время</th>';
+  var table = $('<table/>').addClass('results')
+    .append($('<th/>').text('#'))
+    .append($('<th/>').text('Команда'))
+    .append($('<th/>').text('Очки'))
+    .append($('<th/>').text('Время'));
+  
   for (var j = 0; j < res.teams.length; j++) {
-    var t = res.teams[j];
-    var title = '';
-    if (resultHasUndefinedCheckpoint(t.checkpoints)) {
-      title += '<strong class="no_points">!</strong> '
-    }
-    title +=  '<span class="link" onclick="showRoute([' + t.checkpoints + ']);">' + t.title + '</a>';
-    html += '<tr>' + '<td class="place">' + (j+1) + '</td><td>' + title + '</td><td class="points">' + t.count + '</td><td>' + t.time + '</td></tr>';
+    printTeamResult(j, res);
   }
-  html += '</table>';
   
-  results.html(html);
-  li.append(results);
+  $('<div/>').attr('id', 'cat_' + i).addClass('cat_results')
+    .append(table)
+    .appendTo(li);
   return li;
+}
+
+function printTeamResult(j, res) {
+  var t = res.teams[j];
+  var warn = '';
+  if (resultHasUndefinedCheckpoint(t.checkpoints)) { warn = '<strong class="no_points">!</strong> '; }
+  $('<tr/>')
+    .append($('<td/>').addClass('place').html(j+1))
+    .append($('<td/>').addClass('link').click(function() { showRoute(t.checkpoints)} ).html(warn + t.title))
+    .append($('<td/>').text(t.count))
+    .append($('<td/>').text(t.time))
+    .appendTo(table);
 }
 
 function resultHasUndefinedCheckpoint(checkpoints) {
