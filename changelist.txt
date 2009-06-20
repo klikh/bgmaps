@@ -1,3 +1,5 @@
+Git branch: bgmaps_rel_2_0
+
 === 2.0 ===
 "Multiple events"
 * Added support for multiple events (i.e. contests). All events are handled by single page event.html with event name parameter. User can switch between events using the list of them. On event select all checkpoints and results are dynamically loaded from JSON and placed on the page and on the map.
