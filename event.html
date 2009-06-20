@@ -24,16 +24,15 @@
     var FIRST_TIME = true;
     var POINTS, RESULTS;
     var MAP, MARKERS, POLYLINE, START_POINT;
-    $(document).ready(function(){
+    window.onload = function() {
       initialize();
       loadEvent(document.location.hash.substr(1));
       FIRST_TIME = false;
-    });
-    $(document).unload(function() { GUnload(); }); 
+    };
   </script>
 </head>
 
-<body>
+<body onunload="GUnload();">
   
   <div id="all">
     <div id="header">
