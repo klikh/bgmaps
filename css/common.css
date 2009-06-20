@@ -22,7 +22,7 @@ li {
   border: 1px solid #DDAA66;
 }
 
-span.link {
+.link {
   cursor:pointer;
   cursor:hand;
   color: blue;
@@ -48,9 +48,4 @@ span.link {
   position: absolute;
   bottom: 1em;
   right: 1em;
-}
-
-#copyright {
-  text-align: right;
-  margin-right: 1em;
 }

@@ -1,5 +1,5 @@
 body, p, ol, ul, td {
-  font-size:   13px;
+  font-size: 13px;
 }
 
 /*************************************** LAYOUT *********************************/
@@ -31,10 +31,20 @@ body, p, ol, ul, td {
   height: 600px;
 }
 
-#header #copyright {
+#product_info {
   position: absolute;
   top: 1em;
   right: 1em;
+  margin-right: 1em;
+  text-align: right;
+}
+
+#made_by {
+  font-size: 85%;
+}
+
+#version {
+  font-size: 85%
 }
 
 /*************************************** EVENTS *********************************/
@@ -66,7 +76,6 @@ body, p, ol, ul, td {
   display: none;
   padding: 0.5em;
   margin-top: 0.5em;
-  font-size: 90%;
 }
 
 #checkpoints .link {
@@ -98,25 +107,27 @@ span.cat_name{
   padding: 0.5em;
 }
 
-.cat_results table {
+table.results {
   border-collapse: collapse;
-}
-
-.cat_results th {
-  padding-bottom: 0.5em;
-}
-
-.cat_results td {
-  border: 1px dotted #DDAA66;
   font-size: 90%;
 }
 
-.cat_results td.place {
+table.results  th {
+  padding-bottom: 0.5em;
+}
+
+table.results  td {
+  border: 1px dotted #DDAA66;
+  padding: 2px 4px 2px 4px;
+  font-size: 90%;
+}
+
+table.results  td.place {
   padding: 0 0.5em 0 0.5em;
   text-align: right;
 }
 
-.cat_results td.points {
+table.results  td.points {
   text-align: center;
 }
 
