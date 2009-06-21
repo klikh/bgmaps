@@ -1,4 +1,4 @@
-﻿function initMap() {
+function initMap() {
   MAP = new GMap2(document.getElementById("map"));
   MAP.setUIToDefault();
   MAP.setMapType(G_NORMAL_MAP);
@@ -94,6 +94,24 @@ function showRoute(checkpoints) {
   MAP.addOverlay(POLYLINE);
   
   highlightMapRegion(new GLatLng(minLat, minLng), new GLatLng(maxLat, maxLng));
+  
+  window.scroll(0, getObjectOffsetTop(document.getElementById("map")));
+}
+
+function getObjectOffsetTop(obj) {
+  var curr = 0;
+  while (obj) {
+    if (obj.offsetTop) {
+      curr += obj.offsetTop;
+      if (!((obj.offsetParent) && (obj = obj.offsetParent))) {
+        break;
+      }
+    } else {
+      break;
+    }
+  }
+  
+  return curr;
 }
 
 function clearMap() {
