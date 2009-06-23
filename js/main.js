@@ -1,11 +1,11 @@
-function loadEvent(event) {
+function loadEvent(event, firstTime) {
   if (!getEventByKey(event)) {
     event = DEFAULT_EVENT_KEY;
     document.location.hash = '#' + event;
   }
   
   changeHeader(event);
-  if (FIRST_TIME) {
+  if (firstTime) {
     loadCheckpoints(event);
     loadResults(event);
   } else {                 

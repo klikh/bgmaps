@@ -21,13 +21,11 @@
 <!-- JAVASCRIPTS_END -->
 
   <script type="text/javascript">
-    var FIRST_TIME = true;
     var POINTS, RESULTS;
     var MAP, MARKERS, POLYLINE, START_POINT;
     window.onload = function() {
       initialize();
-      loadEvent(document.location.hash.substr(1));
-      FIRST_TIME = false;
+      loadEvent(document.location.hash.substr(1), true);
     };
   </script>
 </head>
