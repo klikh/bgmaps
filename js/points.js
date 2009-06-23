@@ -22,11 +22,10 @@ function printResults() {
   list.appendTo('#results');
 }
 
-// Print results for the category
 function printCategoryResults(i) {
   var res = RESULTS[i];
 
-  var li = $('<li class="cat_name"></li>')
+  var li = $('<li/>')
     .append($('<span/>').addClass('link').addClass('cat_name')
       .click(function() { $('#cat_' + i).slideToggle(); })
       .text(res.category));
@@ -38,7 +37,7 @@ function printCategoryResults(i) {
     .append($('<th/>').text('Время'));
   
   for (var j = 0; j < res.teams.length; j++) {
-    printTeamResult(j, res);
+    table.append(printTeamResult(j, res));
   }
   
   $('<div/>').attr('id', 'cat_' + i).addClass('cat_results')
@@ -51,12 +50,13 @@ function printTeamResult(j, res) {
   var t = res.teams[j];
   var warn = '';
   if (resultHasUndefinedCheckpoint(t.checkpoints)) { warn = '<strong class="no_points">!</strong> '; }
-  $('<tr/>')
+  return $('<tr/>')
     .append($('<td/>').addClass('place').html(j+1))
-    .append($('<td/>').addClass('link').click(function() { showRoute(t.checkpoints)} ).html(warn + t.title))
+    .append($('<td/>').addClass('link')
+      .click(function() { showRoute(t.checkpoints)} )
+      .html(warn + t.title))
     .append($('<td/>').text(t.count))
-    .append($('<td/>').text(t.time))
-    .appendTo(table);
+    .append($('<td/>').text(t.time));
 }
 
 function resultHasUndefinedCheckpoint(checkpoints) {
