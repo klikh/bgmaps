@@ -1,17 +1,14 @@
 ﻿function printPoints() {
   var table = $('<table/>').addClass('results');
   for (var i = 0; i < POINTS.length; i++) {
-    printPoint(i, table);
+    $('<tr/>')
+      .append($('<td/>').text(POINTS[i].id))
+      .append($('<td/>').addClass('link').attr('data-cpid', i)
+        .click(function() { showInfo($(this).attr('data-cpid')); })
+        .html(POINTS[i].name) )
+      .appendTo(table);
   }
   $('#checkpoints').append(table);
-}
-
-function printPoint(i, table) {
-  $('<tr/>')
-    .append($('<td/>').text(POINTS[i].id))
-    .append($('<td/>').addClass('link').click(function() { showInfo(i); })
-      .html(POINTS[i].name) )
-    .appendTo(table);
 }
 
 function printResults() {
