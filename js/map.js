@@ -1,39 +1,50 @@
-function initMap() {
-  MAP = new GMap2(document.getElementById("map"));
-  MAP.setUIToDefault();
-  MAP.setMapType(G_NORMAL_MAP);
-  MARKERS = [];
+function BGMap() {
+  BGMap.base.call(this, document.getElementById("map"));
+  
+  this.pointsToMarkers = new Hashtable();
+  this.startPoint = null;
+  this.polyline = null;
+  this.categoryControl = null;
+  
+  this.setUIToDefault();
+  this.setMapType(G_NORMAL_MAP);
 }
+BGMap.extends(GMap2);
 
-function getInfoHtmlWindow(point) {
+BGMap.getInfoHtmlWindow = function(point) {
   return '<div class="info"><div class="info_id">' + point.id + '</div><div class="info_name">' + point.name + '</div><div class="info_task">' + point.task + '</div></div>';
 }
 
-function setPointsOnMap() {
+BGMap.prototype.putPoints = function(points, initial) {
   //start point
-  START_POINT = new GLatLng(POINTS[0].coordinates[0], POINTS[0].coordinates[1]);
+  this.startPoint = new GLatLng(points[0].coordinates[0], points[0].coordinates[1]);
   var startIcon = new GIcon(G_DEFAULT_ICON, "img/start.png");
-  var marker = new GMarker(START_POINT, startIcon);
-  putPointMarkerOnMap(marker, POINTS[0]);
+  var marker = new GMarker(this.startPoint, startIcon);
+  this.putPointMarkerOnMap(marker, points[0]);
   
   //other points
   var pointIcon = new GIcon(G_DEFAULT_ICON, "img/cleanmarker.png");
-  var maxLat = POINTS[0].coordinates[0];
-  var maxLng = POINTS[0].coordinates[1];
-  var minLat = POINTS[0].coordinates[0];
-  var minLng = POINTS[0].coordinates[1];
-  for (var i = 1; i < POINTS.length; i++) {
-    var point = new GLatLng(POINTS[i].coordinates[0], POINTS[i].coordinates[1]);
+  var maxLat = points[0].coordinates[0];
+  var maxLng = points[0].coordinates[1];
+  var minLat = points[0].coordinates[0];
+  var minLng = points[0].coordinates[1];
+  for (var i = 1; i < points.length; i++) {
+    var point = new GLatLng(points[i].coordinates[0], points[i].coordinates[1]);
     var labelOffset = new GSize(-6, -30);
     var markerLabel = "markerLabel";
     var markerOptions = {
         icon:pointIcon,
-        title:POINTS[i].id,
-        labelText:POINTS[i].id,
+        title:points[i].id,
+        labelText:points[i].id,
         labelClass:markerLabel,
         labelOffset:labelOffset };
     var marker = new LabeledMarker(point, markerOptions);
-    putPointMarkerOnMap(marker, POINTS[i]);
+    this.putPointMarkerOnMap(marker, points[i]);
+
+    if (initial) {
+      this.categoriesControl = new CategoriesControl(Event.CURRENT.categoryGroups);
+      this.addControl(this.categoriesControl);
+    }
     
     maxLat = Math.max(maxLat, point.lat());
     maxLng = Math.max(maxLng, point.lng());
@@ -41,42 +52,43 @@ function setPointsOnMap() {
     minLng = Math.min(minLng, point.lng());
   }
   
-  highlightMapRegion(new GLatLng(minLat, minLng), new GLatLng(maxLat, maxLng));
+  this.highlightMapRegion(new GLatLng(minLat, minLng), new GLatLng(maxLat, maxLng));
 }
 
-function highlightMapRegion(sw, ne) {
+BGMap.prototype.highlightMapRegion = function(sw, ne) {
     var visibleBounds = new GLatLngBounds(sw, ne);
-    var preferredZoom = MAP.getBoundsZoomLevel(visibleBounds, MAP.getSize());
+    var preferredZoom = this.getBoundsZoomLevel(visibleBounds, this.getSize());
     var preferredCenter = new GLatLng(
         sw.lat() + (ne.lat() - sw.lat())/2,
         sw.lng() + (ne.lng() - sw.lng())/2);
   
     // Set center of the map and preferred zoom
-    MAP.setCenter(preferredCenter, preferredZoom); 
+    this.setCenter(preferredCenter, preferredZoom); 
 }
 
-function putPointMarkerOnMap(marker, point) {
-    MAP.addOverlay(marker);
-    marker.bindInfoWindowHtml(getInfoHtmlWindow(point));
-    MARKERS.push(marker);
+BGMap.prototype.putPointMarkerOnMap = function(marker, point) {
+    this.addOverlay(marker);
+    marker.bindInfoWindowHtml(BGMap.getInfoHtmlWindow(point));
+    this.pointsToMarkers.put(point, marker);
 }
 
-function showInfo(i) {
-  MARKERS[i].openInfoWindowHtml(getInfoHtmlWindow(POINTS[i])); 
-  MAP.setCenter(MARKERS[i].getPoint());
+BGMap.prototype.showInfo = function(point) {
+  var marker = this.pointsToMarkers.get(point);
+  marker.openInfoWindowHtml(BGMap.getInfoHtmlWindow(point)); 
+  this.setCenter(marker.getPoint());
 }
 
-function showRoute(checkpoints) {
-  if (POLYLINE) {
-    MAP.removeOverlay(POLYLINE);
+BGMap.prototype.showRoute = function(checkpoints) {
+  if (this.polyline) {
+    this.removeOverlay(this.polyline);
   }
-  pts = [START_POINT];
-  var maxLat = START_POINT.lat();
-  var maxLng = START_POINT.lng();
-  var minLat = START_POINT.lat()
-  var minLng = START_POINT.lng();
-  for (var i in checkpoints) {
-    point = findPointById(checkpoints[i]);
+  pts = [this.startPoint];
+  var maxLat = this.startPoint.lat();
+  var maxLng = this.startPoint.lng();
+  var minLat = this.startPoint.lat()
+  var minLng = this.startPoint.lng();
+  for (var i = 0; i < checkpoints.length; i++) {
+    point = Event.CURRENT.findPointById(checkpoints[i]);
     if (!point) {
       alert("No checkpoint with id=" + checkpoints[i]);
       return;
@@ -89,16 +101,16 @@ function showRoute(checkpoints) {
     
     pts.push(new GLatLng(point.coordinates[0], point.coordinates[1]));
   }
-  pts.push(START_POINT);
-  POLYLINE = new BDCCArrowedPolyline(pts, "blue", 4, 0.5, null, 30, 7, "blue", 3, 0.5);
-  MAP.addOverlay(POLYLINE);
+  pts.push(this.startPoint);
+  this.polyline = new BDCCArrowedPolyline(pts, "blue", 4, 0.5, null, 30, 7, "blue", 3, 0.5);
+  this.addOverlay(this.polyline);
   
-  highlightMapRegion(new GLatLng(minLat, minLng), new GLatLng(maxLat, maxLng));
+  this.highlightMapRegion(new GLatLng(minLat, minLng), new GLatLng(maxLat, maxLng));
   
-  window.scroll(0, getObjectOffsetTop(document.getElementById("map")));
+  window.scroll(0, this.getObjectOffsetTop(document.getElementById("map")));
 }
 
-function getObjectOffsetTop(obj) {
+BGMap.prototype.getObjectOffsetTop = function(obj) {
   var curr = 0;
   while (obj) {
     if (obj.offsetTop) {
@@ -114,12 +126,13 @@ function getObjectOffsetTop(obj) {
   return curr;
 }
 
-function clearMap() {
-  if (POLYLINE) {
-    MAP.removeOverlay(POLYLINE);
+BGMap.prototype.clear = function() {
+  if (this.polyline) {
+    this.removeOverlay(this.polyline);
   }
-  for (var i = 0; i < MARKERS.length; i++) {
-    MAP.removeOverlay(MARKERS[i]);
+  var markers = this.pointsToMarkers.values();
+  for (var i = 0; i < markers.length; i++) {
+    this.removeOverlay(markers[i]);
   }
-  MARKERS = [];
+  this.pointsToMarkers = new Hashtable();
 }

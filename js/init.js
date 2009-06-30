@@ -1,7 +1,7 @@
 function initialize() {
   createEventsList();
   initShowCheckpointsButton();
-  initMap();
+  MAP = new BGMap();
   $.ajaxSetup({'beforeSend': function(xhr){
       if (xhr.overrideMimeType)
           xhr.overrideMimeType("text/javascript");
@@ -20,7 +20,7 @@ function initShowCheckpointsButton() {
 
 function createEventsList() {
   var ul = $('<ul></ul>');
-  for (var i = 0; i < EVENTS.length; i++) {
+  for (var i = 0; i < Event.ALL_EVENTS.length; i++) {
     createEventLink(i, ul);
   }
   var index = $('<div id="index"></div>');
@@ -31,8 +31,8 @@ function createEventsList() {
 }
 
 function createEventLink(i, ul) {
-  var page = EVENTS[i].key;
-  var a = $('<a>' + EVENTS[i].name + '</a>');
+  var page = Event.ALL_EVENTS[i].key;
+  var a = $('<a>' + Event.ALL_EVENTS[i].name + '</a>');
   a.attr('href', '#' + page);
   a.click(function() {
     loadEvent(page, false);

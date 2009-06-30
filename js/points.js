@@ -1,14 +1,24 @@
-﻿function printPoints() {
+﻿function printPoints(points) {
   var table = $('<table/>').addClass('results');
-  for (var i = 0; i < POINTS.length; i++) {
+  for (var i = 0; i < points.length; i++) {
     $('<tr/>')
-      .append($('<td/>').text(POINTS[i].id))
+      .append($('<td/>').text(points[i].id))
       .append($('<td/>').addClass('link').attr('data-cpid', i)
-        .click(function() { showInfo($(this).attr('data-cpid')); })
-        .html(POINTS[i].name) )
+        .click(function() { MAP.showInfo(points[$(this).attr('data-cpid')]); })
+        .html(points[i].name) )
+      .append($('<td/>').text(getCategoriesAbbrs(points[i].categories)))
       .appendTo(table);
   }
   $('#checkpoints').append(table);
+}
+
+function getCategoriesAbbrs(categories) {
+  var groups = Event.CURRENT.findGroupsForCategoryKeys(categories);
+  var text= '';
+  for (var i = 0; i < groups.length; i++) {
+    text += groups[i].abbr;
+  }
+  return text;
 }
 
 function printResults() {
@@ -50,7 +60,7 @@ function printTeamResult(j, res) {
   return $('<tr/>')
     .append($('<td/>').addClass('place').html(j+1))
     .append($('<td/>').addClass('link')
-      .click(function() { showRoute(t.checkpoints)} )
+      .click(function() { MAP.showRoute(t.checkpoints)} )
       .html(warn + t.title))
     .append($('<td/>').text(t.count))
     .append($('<td/>').text(t.time));
@@ -58,17 +68,9 @@ function printTeamResult(j, res) {
 
 function resultHasUndefinedCheckpoint(checkpoints) {
   for (var i = 0; i < checkpoints.length; i++) {
-    if (!findPointById(checkpoints[i])) {
+    if (!Event.CURRENT.findPointById(checkpoints[i])) {
       return true;
     }
   }
   return false;
-}
-
-function findPointById(id) {
-  for (var i = 0; i < POINTS.length; i++) {
-    if (POINTS[i].id == id) {
-      return POINTS[i];
-    }
-  }
 }

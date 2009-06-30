@@ -1,9 +1,10 @@
 function loadEvent(event, firstTime) {
-  if (!getEventByKey(event)) {
-    event = DEFAULT_EVENT_KEY;
+  if (!Event.get(event)) {
+    event = Event.DEFAULT.key;
     document.location.hash = '#' + event;
   }
-  
+
+  Event.setCurrent(Event.get(event));
   changeHeader(event);
   if (firstTime) {
     loadCheckpoints(event);
@@ -22,20 +23,23 @@ function loadEvent(event, firstTime) {
 function clearAll() {
   $('#checkpoints').html(' ');
   $('#results').html('');
-  clearMap();
+  MAP.clear();
+  MAP.removeControl(this.categoriesControl);
 }
 
 function changeHeader(page) {
-  var name = getEventByKey(page).name;
+  var event = Event.get(page);
+  var name = event.name;
   $('#header h1').html(name);
-  document.title = getEventByKey(page).name;
+  document.title = event.name;
 }
 
 function loadCheckpoints(event) {
   $.getJSON('points/' + event + '.js', function(data) {
-    POINTS = eval(data);
-    printPoints();
-    setPointsOnMap();
+    var points = eval(data);
+    Event.CURRENT.setPoints(points);
+    printPoints(points);
+    MAP.putPoints(points, true);
   });
 }
 
