@@ -1,5 +1,5 @@
 function BGMap() {
-  BGMap.base.call(this, document.getElementById("map"));
+  BGMap.base.call(this, get$("map"));
   
   this.pointsToMarkers = new Hashtable();
   this.startPoint = null;
@@ -107,7 +107,7 @@ BGMap.prototype.showRoute = function(checkpoints) {
   
   this.highlightMapRegion(new GLatLng(minLat, minLng), new GLatLng(maxLat, maxLng));
   
-  window.scroll(0, this.getObjectOffsetTop(document.getElementById("map")));
+  window.scroll(0, this.getObjectOffsetTop(get$("map")));
 }
 
 BGMap.prototype.getObjectOffsetTop = function(obj) {

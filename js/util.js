@@ -17,3 +17,12 @@ Function.prototype.extends = function(base){
 function new$(name) {
   return document.createElement(name);
 }
+
+/**
+ * Synonym for document.getElementById.
+ * If you need just to get element by id, use get$('id') instead of $('#id'),
+ * because JQuery's $() is slower, because it uses complicated selector logic.
+ */
+function get$(id) {
+  return document.getElementById(id);
+}
