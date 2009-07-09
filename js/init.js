@@ -35,7 +35,7 @@ function createEventLink(i, ul) {
   var a = $('<a>' + Event.ALL_EVENTS[i].name + '</a>');
   a.attr('href', '#' + page);
   a.click(function() {
-    loadEvent(page, false);
+    loadEvent(page);
   });
   var li = $('<li style="padding: 0.5em;"></li>');
   a.appendTo(li);

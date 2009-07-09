@@ -1,4 +1,4 @@
-function loadEvent(event, firstTime) {
+function loadEvent(event) {
   if (!Event.get(event)) {
     event = Event.DEFAULT.key;
     document.location.hash = '#' + event;
@@ -6,18 +6,13 @@ function loadEvent(event, firstTime) {
 
   Event.setCurrent(Event.get(event));
   changeHeader(event);
-  if (firstTime) {
+  $('#events').slideUp(function() {
+    toggleShowEventsButton(false);
+    clearAll();
     loadCheckpoints(event);
     loadResults(event);
-  } else {                 
-    $('#events').slideUp(function() {
-      toggleShowEventsButton(false);
-      clearAll();
-      loadCheckpoints(event);
-      loadResults(event);
-      $('#results').slideDown();
-    });
-  }
+    $('#results').slideDown();
+  });
 }
 
 function clearAll() {
@@ -29,8 +24,7 @@ function clearAll() {
 
 function changeHeader(page) {
   var event = Event.get(page);
-  var name = event.name;
-  $('#header h1').html(name);
+  $('#header h1').html(event.name);
   document.title = event.name;
 }
 
