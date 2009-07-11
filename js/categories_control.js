@@ -25,8 +25,14 @@ CategoriesControl.prototype.createCategoryElement = function(container, name, ke
   div.appendChild(document.createTextNode(name));
   var outer = this;
   GEvent.addDomListener(div, "click", function() {
+    var points = Event.CURRENT.getPointsByCategoryGroup(key);
+    
     MAP.clear();
-    MAP.putPoints(Event.CURRENT.getPointsByCategoryGroup(key));
+    MAP.putPoints(points);
+    
+    CheckpointsList.instance.clear();
+    CheckpointsList.instance.print(points);
+    
     outer.setButtonStyle(outer.selectedDiv);
     outer.selectedDiv = div;
     outer.setSelectedStyle(outer.selectedDiv);

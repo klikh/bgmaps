@@ -1,25 +1,11 @@
-﻿function printPoints(points) {
-  var table = $('<table/>').addClass('results');
-  for (var i = 0; i < points.length; i++) {
-    $('<tr/>')
-      .append($('<td/>').text(points[i].id))
-      .append($('<td/>').addClass('link').attr('data-cpid', i)
-        .click(function() { MAP.showInfo(points[$(this).attr('data-cpid')]); })
-        .html(points[i].name) )
-      .append($('<td/>').text(getCategoriesAbbrs(points[i].categories)))
-      .appendTo(table);
-  }
-  $('#checkpoints').append(table);
-}
-
-function getCategoriesAbbrs(categories) {
-  var groups = Event.CURRENT.findGroupsForCategoryKeys(categories);
-  var text= '';
-  for (var i = 0; i < groups.length; i++) {
-    text += groups[i].abbr;
-  }
-  return text;
-}
+﻿// function getCategoriesAbbrs(categories) {
+//   var groups = Event.CURRENT.findGroupsForCategoryKeys(categories);
+//   var text= '';
+//   for (var i = 0; i < groups.length; i++) {
+//     text += groups[i].abbr;
+//   }
+//   return text;
+// }
 
 function printResults() {
   var list = $('<ul/>');
