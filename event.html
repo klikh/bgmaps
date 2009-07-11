@@ -34,10 +34,13 @@
       initialize();
       loadEvent(document.location.hash.substr(1));
     };
+    window.onunload = function() {
+      GUnload();
+    };
   </script>
 </head>
 
-<body onunload="GUnload();">
+<body>
   
   <div id="all">
     <div id="header">
