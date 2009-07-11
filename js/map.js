@@ -78,7 +78,7 @@ BGMap.prototype.showRoute = function(checkpoint_numbers) {
   this.polyline = new BDCCArrowedPolyline(coords, "blue", 4, 0.5, null, 30, 7, "blue", 3, 0.5);
   this.addOverlay(this.polyline);
   this.highlightMapRegion(checkpoints);
-  window.scroll(0, BGMap.getObjectOffsetTop(get$("map")));
+  scrollTo('map');
 }
 
 
@@ -101,21 +101,6 @@ BGMap.prototype.clear = function() {
 
 BGMap.getInfoHtmlWindow = function(point) {
   return '<div class="info"><div class="info_id">' + point.id + '</div><div class="info_name">' + point.name + '</div><div class="info_task">' + point.task + '</div></div>';
-}
-
-BGMap.getObjectOffsetTop = function(obj) {
-  var curr = 0;
-  while (obj) {
-    if (obj.offsetTop) {
-      curr += obj.offsetTop;
-      if (!((obj.offsetParent) && (obj = obj.offsetParent))) {
-        break;
-      }
-    } else {
-      break;
-    }
-  }
-  return curr;
 }
 
 /**
