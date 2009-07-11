@@ -36,6 +36,16 @@ function new$(name) {
 }
 
 /**
+ * Shortcut for one of these options:
+ * $('<tag/>')
+ * $(document.createElement('tag'))
+ * $(new$('tag))
+ */
+function new$$(name) {
+  return $(document.createElement(name));
+}
+
+/**
  * Synonym for document.getElementById.
  * If you need just to get element by id, use get$('id') instead of $('#id'),
  * because JQuery's $() is slower as it uses complicated selector logic.
