@@ -1,0 +1,19 @@
+/* Styles related to map */
+
+.catControlButton {
+  color: DarkBlue;
+  background: white;
+  font-weight: normal;
+  font-size: 90%;
+  border: 1px dotted black;
+  margin: 2px;
+  padding: 2px 5px 2px 5px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.catControlSelectedButton {
+  color: black;
+  font-weight: bold;
+  cursor: default;
+}
