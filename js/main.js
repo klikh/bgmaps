@@ -40,7 +40,7 @@ function loadCheckpoints(event) {
 function loadResults(event) {
   $.getJSON('results/' + event + '.js', function(data) {
     RESULTS = eval(data);
-    printResults();
+    ResultsList.instance.print();
   });
 }
 
