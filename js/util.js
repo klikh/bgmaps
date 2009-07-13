@@ -16,9 +16,10 @@ Array.prototype.removeDuplicates = function() {
  * function A() {
  *   A.base.call(this, <other parameters of parent constructor>);
  * }
- * A.extends(B);
+ * A.extend(B);
+ * Note 'extend' (without 's' at the end): 'extends' is a probable future reserved word.
  */
-Function.prototype.extends = function(base){
+Function.prototype.extend = function(base){
  function Closure(){}
  Closure.prototype = base.prototype;
  this.prototype = new Closure();

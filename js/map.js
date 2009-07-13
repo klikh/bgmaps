@@ -9,7 +9,7 @@ function BGMap() {
   this.setUIToDefault();
   this.setMapType(G_NORMAL_MAP);
 }
-BGMap.extends(GMap2);
+BGMap.extend(GMap2);
 
 BGMap.prototype.putPoints = function(points, initial) {
   //start point
