@@ -32,11 +32,11 @@ BGMap.prototype.putPoints = function(points, initial) {
         labelOffset:labelOffset };
     var marker = new LabeledMarker(point, markerOptions);
     this.putPointMarkerOnMap(marker, points[i]);
+  }
 
-    if (initial) {
-      this.categoriesControl = new CategoriesControl(Event.CURRENT.categoryGroups);
-      this.addControl(this.categoriesControl);
-    }
+  if (initial) {
+    this.categoriesControl = new CategoriesControl(Event.CURRENT.categoryGroups);
+    this.addControl(this.categoriesControl);
   }
   
   this.highlightMapRegion(points);
