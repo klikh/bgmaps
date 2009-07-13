@@ -1,0 +1,30 @@
+#checkpoints_wrapper {
+}
+
+#checkpoints_wrapper h2 {
+  margin-bottom: 0.5em;
+}
+
+#show_checkpoints {
+  font-size: 90%;
+  color: blue;
+  text-decoration: underline;
+}
+
+#checkpoints {
+  display: none;
+  padding: 0.5em;
+}
+
+#checkpoints .link {
+  text-decoration: none;
+}
+
+.categoriesControlPanel {
+  padding: 0 0 1em 0;
+}
+
+.categoriesControlPanel .catControlButton {
+  margin-left: 0;
+  margin-right: 4px;
+}

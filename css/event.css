@@ -57,31 +57,6 @@ body, p, ol, ul, td {
   display: none;
 }
 
-/*************************************** CHECKPOINTS *********************************/
-
-#checkpoints_wrapper {
-}
-
-#checkpoints_wrapper h2 {
-  margin-bottom: 0.5em;
-}
-
-#show_checkpoints {
-  font-size: 90%;
-  color: blue;
-  text-decoration: underline;
-}
-
-#checkpoints {
-  display: none;
-  padding: 0.5em;
-  margin-top: 0.5em;
-}
-
-#checkpoints .link {
-  text-decoration: none;
-}
-
 /*************************************** RESULTS *********************************/
 
 

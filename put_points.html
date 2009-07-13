@@ -4,7 +4,8 @@
 <head>
   <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
   <title>День в городе 2009 — карта и маршруты</title>
-   <link href="main.css" rel="stylesheet" type="text/css" /> 
+   <link href="common.css" rel="stylesheet" type="text/css" /> 
+   <link href="event.css" rel="stylesheet" type="text/css" /> 
   
   <script src="http://maps.google.com/maps?file=api&amp;v=2&amp;sensor=true_or_false&amp;key=ABQIAAAA4iMT6e1cHfPMjMaFvdWPWBT2yXp_ZAY8_ufC3CFXhHIE1NvwkxReuuQ4S6Yz3mjkKpgvXdDE_znDqQ" type="text/javascript"></script>
   
@@ -19,35 +20,35 @@
     }
 
     function initMap() {
-      MAP = new GMap2(document.getElementById("map"));
-      MAP.setUIToDefault();
-      MAP.setMapType(G_NORMAL_MAP);
-      MAP.setCenter(startPoint, 16);
+      // MAP = new GMap2(document.getElementById("map"));
+      // MAP.setUIToDefault();
+      // MAP.setMapType(G_NORMAL_MAP);
+      // MAP.setCenter(startPoint, 16);
       showAddress('Петропавловкая крепость');
     }
     
     var geocoder = new GClientGeocoder();
     
     function showAddress(address) {
-      if (MARKER) { MAP.removeOverlay(MARKER); }
-      geocoder.getLatLng(
-        address,
-        function(point) {
-          if (!point) {
-            alert("\"" + address + "\" not found");
-          } else {
-            MAP.setCenter(point, 16);
-            MARKER = new GMarker(point, {draggable: true});
-            
-            GEvent.addListener(MARKER, "dragend", function() {
-              appendResult(MARKER);
-            });
-                    
-            MAP.addOverlay(MARKER);
-            appendResult(MARKER);
-          }
-        }
-      );
+      // if (MARKER) { MAP.removeOverlay(MARKER); }
+      // geocoder.getLatLng(
+      //   address,
+      //   function(point) {
+      //     if (!point) {
+      //       alert("\"" + address + "\" not found");
+      //     } else {
+      //       MAP.setCenter(point, 16);
+      //       MARKER = new GMarker(point, {draggable: true});
+      //       
+      //       GEvent.addListener(MARKER, "dragend", function() {
+      //         appendResult(MARKER);
+      //       });
+      //               
+      //       MAP.addOverlay(MARKER);
+      //       appendResult(MARKER);
+      //     }
+      //   }
+      // );
       return false;
     }
     
@@ -78,7 +79,7 @@
 </head>
 
 <body onload="initialize()" onunload="GUnload()">
-
+<div id="all">
 <div id="content">
     <div id="left_panel">
       <form onsubmit="return showAddress(document.getElementById('input_address').value)">
@@ -96,5 +97,6 @@
       <div id="map"></div>
     </div>
   </div>
+</div>
 </body>
 </html>

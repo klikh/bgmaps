@@ -1,48 +1,46 @@
-function loadEvent(event, firstTime) {
-  if (!getEventByKey(event)) {
-    event = DEFAULT_EVENT_KEY;
+function loadEvent(event) {
+  if (!Event.get(event)) {
+    event = Event.DEFAULT.key;
     document.location.hash = '#' + event;
   }
-  
+
+  Event.setCurrent(Event.get(event));
   changeHeader(event);
-  if (firstTime) {
+  $('#events').slideUp(function() {
+    toggleShowEventsButton(false);
+    clearAll();
     loadCheckpoints(event);
     loadResults(event);
-  } else {                 
-    $('#events').slideUp(function() {
-      toggleShowEventsButton(false);
-      clearAll();
-      loadCheckpoints(event);
-      loadResults(event);
-      $('#results').slideDown();
-    });
-  }
+    $('#results').slideDown();
+  });
 }
 
 function clearAll() {
   $('#checkpoints').html(' ');
   $('#results').html('');
-  clearMap();
+  MAP.clear();
+  MAP.removeControl(this.categoriesControl);
 }
 
 function changeHeader(page) {
-  var name = getEventByKey(page).name;
-  $('#header h1').html(name);
-  document.title = getEventByKey(page).name;
+  var event = Event.get(page);
+  $('#header h1').html(event.name);
+  document.title = event.name;
 }
 
 function loadCheckpoints(event) {
   $.getJSON('points/' + event + '.js', function(data) {
-    POINTS = eval(data);
-    printPoints();
-    setPointsOnMap();
+    var points = eval(data);
+    Event.CURRENT.setPoints(points);
+    MAP.putPoints(points, true);
+    CheckpointsList.instance.print(points);
   });
 }
 
 function loadResults(event) {
   $.getJSON('results/' + event + '.js', function(data) {
     RESULTS = eval(data);
-    printResults();
+    ResultsList.instance.print();
   });
 }
 
