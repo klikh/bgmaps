@@ -4,7 +4,7 @@ function BGMap() {
   this.pointsToMarkers = new Hashtable();
   this.startPoint = null;
   this.polyline = null;
-  this.categoryControl = null;
+  this.categoriesControl = null;
   
   this.setUIToDefault();
   this.setMapType(G_NORMAL_MAP);
