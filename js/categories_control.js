@@ -6,7 +6,7 @@ function CategoriesControl(categories) {
 CategoriesControl.prototype = new GControl();
 
 CategoriesControl.prototype.initialize = function(map) {
-  var container = new$$('div');
+  var container = new$('div');
 
   this.selectedDiv = this.createCategoryElement(container, 'Все', 'all')
   this.selectedDiv.addClass('catControlSelectedButton');
@@ -19,7 +19,7 @@ CategoriesControl.prototype.initialize = function(map) {
 }
 
 CategoriesControl.prototype.createCategoryElement = function(container, name, key) {
-  var div = new$$('span').addClass('catControlButton').text(name).appendTo(container);
+  var div = new$('span').addClass('catControlButton').text(name).appendTo(container);
   var outer = this;
   GEvent.addDomListener(div.context, 'click', function() {
     var points = Event.CURRENT.getPointsByCategoryGroup(key);

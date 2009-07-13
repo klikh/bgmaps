@@ -27,21 +27,11 @@ Function.prototype.extends = function(base){
 }
 
 /**
- * Synonym for document.createElement.
- * If you need to create an element and then use in jQuery, use $(new$('tag')) instead of $('<tag/>'),
- * because JQuery's $() is slower as it uses complicated selector logic.
- */
+* Synonym for $(document.createElement).
+* It is faster than $('<tag/>')
+* It is shorter than $(document.createElement('tag'))
+*/
 function new$(name) {
-  return document.createElement(name);
-}
-
-/**
- * Shortcut for one of these options:
- * $('<tag/>')
- * $(document.createElement('tag'))
- * $(new$('tag))
- */
-function new$$(name) {
   return $(document.createElement(name));
 }
 

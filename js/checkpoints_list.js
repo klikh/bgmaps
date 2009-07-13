@@ -12,11 +12,11 @@ CheckpointsList.instance = new CheckpointsList();
  * @param checkpoints Array of checkpoints to be printed.
  */
 CheckpointsList.prototype.print = function(checkpoints) {
-  var table = new$$('table').addClass('results');
+  var table = new$('table').addClass('results');
   for (var i = 0; i < checkpoints.length; i++) {
-    new$$('tr')
-      .append(new$$('td').text(checkpoints[i].id))
-      .append(new$$('td').addClass('link').attr('data-cpid', i)
+    new$('tr')
+      .append(new$('td').text(checkpoints[i].id))
+      .append(new$('td').addClass('link').attr('data-cpid', i)
         .click(function() { MAP.showInfo(checkpoints[$(this).attr('data-cpid')]); })
         .html(checkpoints[i].name) )
       .appendTo(table);
