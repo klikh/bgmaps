@@ -22,7 +22,12 @@ CheckpointsList.prototype.print = function(checkpoints) {
       .appendTo(table);
   }
   $('#checkpoints').append(table);
-  $('#checkpoints').prepend(MAP.categoriesControl.makeControlPanel()); 
+  
+  new$('div')
+    .addClass('categoriesControlPanel')
+    .append(new$('span').text('Категории: '))
+    .append(MAP.categoriesControl.makeControlPanel())
+    .prependTo($('#checkpoints'));
 }
 
 /**
