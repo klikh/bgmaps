@@ -32,8 +32,8 @@ function loadCheckpoints(event) {
   $.getJSON('points/' + event + '.js', function(data) {
     var points = eval(data);
     Event.CURRENT.setPoints(points);
-    CheckpointsList.instance.print(points);
     MAP.putPoints(points, true);
+    CheckpointsList.instance.print(points);
   });
 }
 

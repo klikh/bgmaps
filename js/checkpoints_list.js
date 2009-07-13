@@ -1,4 +1,4 @@
-/**
+﻿/**
  * List of all checkpoints.
  * It is intended to be a singleton, so use CheckpointsList.instance
  */
@@ -22,6 +22,7 @@ CheckpointsList.prototype.print = function(checkpoints) {
       .appendTo(table);
   }
   $('#checkpoints').append(table);
+  $('#checkpoints').prepend(MAP.categoriesControl.makeControlPanel()); 
 }
 
 /**
