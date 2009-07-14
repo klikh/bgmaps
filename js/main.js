@@ -16,8 +16,8 @@ function loadEvent(event) {
 }
 
 function clearAll() {
-  $('#checkpoints').html(' ');
-  $('#results').html('');
+  $('#checkpoints').empty();
+  $('#results').empty();
   MAP.clear();
   MAP.removeControl(MAP.categoriesControl);
 }
