@@ -19,33 +19,26 @@ function initShowCheckpointsButton() {
 }
 
 function createEventsList() {
-  var ul = $('<ul></ul>');
+  var ul = new$('ul');
   for (var i = 0; i < Event.ALL_EVENTS.length; i++) {
-    createEventLink(i, ul);
+    ul.append(createEventLink(i));
   }
-  var index = $('<div id="index"></div>');
-  ul.appendTo(index);
-  index.appendTo($('#events'));
+  ul.appendTo($('#events'));
   
-  initShowEventsButton();
-}
-
-function createEventLink(i, ul) {
-  var page = Event.ALL_EVENTS[i].key;
-  var a = $('<a>' + Event.ALL_EVENTS[i].name + '</a>');
-  a.attr('href', '#' + page);
-  a.click(function() {
-    loadEvent(page);
-  });
-  var li = $('<li style="padding: 0.5em;"></li>');
-  a.appendTo(li);
-  li.appendTo(ul);
-}
-
-function initShowEventsButton() {
   $('#show_events').click(function() {
       $('#events').slideToggle(function() {
         toggleShowEventsButton();
       });
   });
+}
+
+function createEventLink(i) {
+  var page = Event.ALL_EVENTS[i].key;
+  var a = new$('a')
+    .text(Event.ALL_EVENTS[i].name)
+    .attr('href', '#' + page)
+    .click(function() {
+      loadEvent(page);
+    });
+  return new$('li').append(a);
 }

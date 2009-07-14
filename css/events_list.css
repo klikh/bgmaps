@@ -1,0 +1,11 @@
+#events_wrapper h2 {
+  margin-bottom: 0.5em;
+}
+
+#events {
+  display: none;
+}
+
+#events li {
+  padding: 0.5em;
+}
