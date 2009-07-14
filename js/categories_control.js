@@ -60,7 +60,10 @@ CategoriesControl.prototype.makeControlPanel = function() {
  * @return {JQuery} SPAN with the button.
  */
 CategoriesControl.prototype.makeCategoryElement = function(name, key) {
-  var button = new$('span').addClass('catControlButton').text(name).attr('id', 'catCPButton_' + key);
+  var button = new$('span')
+    .addClass('catControlButton')
+    .html(name + '<img src="img/' + key + '16.png"/>')
+    .attr('id', 'catCPButton_' + key);
   
   var outer = this;
   button.click(function() {
