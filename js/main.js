@@ -19,7 +19,7 @@ function clearAll() {
   $('#checkpoints').html(' ');
   $('#results').html('');
   MAP.clear();
-  MAP.removeControl(this.categoriesControl);
+  MAP.removeControl(MAP.categoriesControl);
 }
 
 function changeHeader(page) {
