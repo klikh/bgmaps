@@ -48,6 +48,7 @@ BGMap.prototype.putPoints = function(points, initial) {
  */
 BGMap.prototype.showInfo = function(point) {
   var marker = this.pointsToMarkers.get(point);
+  CheckpointsList.instance.highlightSelectedCheckpoint(point.id);
   marker.openInfoWindowHtml(BGMap.getInfoHtmlWindow(point)); 
   this.setCenter(marker.getPoint());
 }
@@ -99,8 +100,31 @@ BGMap.prototype.clear = function() {
 
 /******************************** PRIVATE METHODS ********************************/
 
+/**
+ * Puts marker on the map, adds click-event to it, adds marker and point to the pointsToMarkers hash.
+ * @param marker {GMarker} Marker to put on the map.
+ * @param point {Checkpoint} Point which marker is associated with. 
+ */
+BGMap.prototype.putPointMarkerOnMap = function(marker, point) {
+  this.addOverlay(marker);
+  var bgmap = this;
+  GEvent.addListener(marker, 'click', function() {
+    bgmap.showInfo(point);
+  });
+  this.pointsToMarkers.put(point, marker);
+}
+
+/**
+ * Get HTML for bubble window which is shown on the map when a checkpoint is selected.
+ * Window shows basic information about the checkpoint.
+ * @param point {Checkpoint} Checkpoint which is selected.
+ */
 BGMap.getInfoHtmlWindow = function(point) {
-  return '<div class="info"><div class="info_id">' + point.id + '</div><div class="info_name">' + point.name + '</div><div class="info_task">' + point.task + '</div></div>';
+  return new$('div').addClass('info')
+    .append(new$('div').addClass('info_id').text(point.id))
+    .append(new$('div').addClass('info_name').text(point.name))
+    .append(new$('div').addClass('info_task').text(point.task))
+    .context;
 }
 
 /**
@@ -139,10 +163,4 @@ BGMap.prototype.findRoundingRectangle = function(checkpoints) {
     minLng = Math.min(minLng, checkpoints[i].coordinates[1]);
   }
   return [new GLatLng(minLat, minLng), new GLatLng(maxLat, maxLng)];
-}
-
-BGMap.prototype.putPointMarkerOnMap = function(marker, point) {
-  this.addOverlay(marker);
-  marker.bindInfoWindowHtml(BGMap.getInfoHtmlWindow(point));
-  this.pointsToMarkers.put(point, marker);
 }

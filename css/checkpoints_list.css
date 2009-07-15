@@ -20,6 +20,12 @@
   text-decoration: none;
 }
 
+.selectedCheckpoint {
+  font-weight: bold;
+  color: black;
+  cursor: default;
+}
+
 .categoriesControlPanel {
   padding: 0 0 1em 0;
 }
