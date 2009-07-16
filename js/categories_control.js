@@ -83,12 +83,20 @@ CategoriesControl.prototype.selectCategory = function(key) {
  * @return {JQuery} SPAN with the button.
  */
 CategoriesControl.prototype.makeCategoryElement = function(name, key) {
-  var button = new$('span')
+  if (key == 'all') {
+    var tooltipText = 'Показать все категории';
+  } else {
+    var tooltipText = 'Показать только КП категории «' + name + '»'
+  }
+  
+  var button = new$('a')
+    .attr('href', '#')
+    .addClass('tooltip')
     .addClass('catControlButton')
-    .html(name + '<img src="img/' + key + '16.png"/>')
+    .html('<span class="text">' + name + '<img src="img/' + key + '16.png"/></span>' + '<span class="tooltip">' + tooltipText + '</span>')
     .attr('id', 'catCPButton_' + key);
   
   var outer = this;
-  button.click(function() { outer.selectCategory(key); });
+  button.click(function() { outer.selectCategory(key); return false; });
   return button;
 }
