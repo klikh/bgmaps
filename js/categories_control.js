@@ -74,6 +74,7 @@ CategoriesControl.prototype.makeCategoryElement = function(name, key) {
     
     CheckpointsList.instance.clear();
     CheckpointsList.instance.print(points);
+    ResultsList.instance.resetHighlighting();
       
     for (var i = 0; i < outer.controlPanels.length; i++) {
       outer.controlPanels[i].children('.catControlSelectedButton').removeClass('catControlSelectedButton');

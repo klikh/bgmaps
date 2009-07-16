@@ -48,6 +48,13 @@ CheckpointsList.prototype.clear = function() {
  * @param {Integer} cpid Checkpoint number - i.e. its contest's 'id', written in the points JSON.
  */
 CheckpointsList.prototype.highlightSelectedCheckpoint = function(cpid) {
-  $('#checkpoints td.selectedCheckpoint').removeClass('selectedCheckpoint');
+  this.resetHighlighting();
   $('#checkpoints td[data-cpid=' + cpid + ']').addClass('selectedCheckpoint');
+}
+
+/**
+ * Removes highlighting from all checkpoints rows.
+ */
+CheckpointsList.prototype.resetHighlighting = function() {
+  $('#checkpoints td.selectedCheckpoint').removeClass('selectedCheckpoint');
 }

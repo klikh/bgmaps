@@ -43,12 +43,21 @@ ResultsList.prototype.printCategoryResults = function(i) {
 
 ResultsList.prototype.printTeamResult = function(j, res) {
   var t = res.teams[j];
+  
   var warn = '';
-  if (this.resultHasUndefinedCheckpoint(t.checkpoints)) { warn = '<strong class="no_points">!</strong> '; }
+  if (this.resultHasUndefinedCheckpoint(t.checkpoints)) { 
+    warn = '<strong class="no_points">!</strong> '; 
+  }
+  
+  var placeNum = j+1;
+  var outer = this;
   return new$('tr')
-    .append(new$('td').addClass('place').html(j+1))
+    .append(new$('td').addClass('place').html(placeNum))
     .append(new$('td').addClass('link')
-      .click(function() { MAP.showRoute(t.checkpoints)} )
+      .click(function() { 
+        MAP.showRoute(t.checkpoints);
+        outer.highlightSelected($(this));
+      })
       .html(warn + t.title))
     .append(new$('td').text(t.count))
     .append(new$('td').text(t.time));
@@ -61,4 +70,22 @@ ResultsList.prototype.resultHasUndefinedCheckpoint = function(checkpoints) {
     }
   }
   return false;
+}
+
+/**
+ * Highlights the selected team result in the list.
+ * Removes hightlighting from the currently selected if there is one.
+ * @param obj {JQuery} JQuery wrapper for DOM element which should be selected
+ *                     (row in the results table).
+ */
+ResultsList.prototype.highlightSelected = function(obj) {
+  this.resetHighlighting();
+  obj.addClass('selectedResult');
+}
+
+/**
+ * Removes highlighting from all result rows.
+ */
+ResultsList.prototype.resetHighlighting = function() {
+  $('#results td.selectedResult').removeClass('selectedResult');
 }

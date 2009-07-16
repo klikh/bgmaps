@@ -1,0 +1,58 @@
+
+
+#results_wrapper {
+}
+
+#results {
+  padding-top: 1em;
+}
+
+#results .link {
+  text-decoration: none;
+}
+
+span.cat_name{
+  font-weight: bold;
+}
+
+.cat_results {
+  display: none;
+  margin-right: 1em;
+  margin-top: 1em;
+  padding: 0.5em;
+}
+
+.selectedResult {
+  font-weight: bold;
+  color: black;
+  cursor: default;
+}
+
+table.results {
+  border-collapse: collapse;
+  font-size: 90%;
+}
+
+table.results  th {
+  padding-bottom: 0.5em;
+}
+
+table.results  td {
+  border: 1px dotted #DDAA66;
+  padding: 2px 4px 2px 4px;
+  font-size: 90%;
+}
+
+table.results  td.place {
+  padding: 0 0.5em 0 0.5em;
+  text-align: right;
+}
+
+table.results  td.points {
+  text-align: center;
+}
+
+.no_points {
+  font-weight: bold;
+  color: red;
+}
