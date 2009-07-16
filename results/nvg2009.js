@@ -1,4 +1,6 @@
-[{ 'category': 'Бег Лайт',
+[{ 'category': 
+{ 'name': 'Бег Лайт',
+  'key': 'run-light' },
 'teams' : [
 { 
 'number': 140,
@@ -396,7 +398,9 @@
 'time': '05:31:42',
 'checkpoints': [15, 13, 24, 21, 16, 19, 18, 25, 29, 37, 32, 17, 28, 33, 39, 27, 30, 22]
 }] },
-{ 'category': 'Бег Про',
+{ 'category':
+{ 'name': 'Бег Про',
+  'key': 'run-pro' },
 'teams' : [
 { 
 'number': 261,
@@ -965,7 +969,9 @@
 'time': '01:08:06',
 'checkpoints': [12, 13, 23, 11]
 }] },
-{ 'category': 'Вело Лайт',
+{ 'category':
+{ 'name': 'Вело Лайт',
+  'key': 'rider-light' },
 'teams' : [
 { 
 'number': 307,
@@ -1120,7 +1126,9 @@
 'time': '03:16:00',
 'checkpoints': [22, 30, 39, 33, 41, 42, 35, 32, 17, 28, 16, 19, 18, 25, 37, 45, 62, 46, 55]
 }] },
-{ 'category': 'Вело Про',
+{ 'category':
+{ 'name': 'Вело Про',
+  'key': 'rider-pro' },
 'teams' : [
 { 
 'number': 431,

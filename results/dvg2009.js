@@ -1,5 +1,7 @@
 [
-{ 'category': 'Бег Лайт',
+{ 'category': 
+  { 'name': 'Бег Лайт',
+    'key': 'run-light' },
 'teams' : [
 { 
 'number': 142,
@@ -784,7 +786,9 @@
 'time': '04:19:24',
 'checkpoints': [17,16,15,14,22,30,44,38,43,23,18]
 }] },
-{ 'category': 'Бег Про',
+{ 'category': 
+{ 'name': 'Бег Про',
+  'key': 'run-pro' },
 'teams' : [
 { 
 'number': 256,
@@ -1380,7 +1384,9 @@
 'time': '06:32:07',
 'checkpoints': [11,26,37,24,13,27,46,34,40,33,15,14]
 }] },
-{ 'category': 'Вело Лайт',
+{ 'category': 
+{ 'name': 'Вело Лайт',
+  'key': 'rider-light' },
 'teams' : [
 { 
 'number': 321,
@@ -1626,7 +1632,9 @@
 'checkpoints': [26,36,53,74,49,69,55,66,51,22]
 }
 ] },
-{ 'category': 'Вело Про',
+{ 'category':
+{ 'name': 'Вело Про',
+  'key': 'rider-pro' },
 'teams' : [
 { 
 'number': 443,
@@ -1980,7 +1988,9 @@
 'checkpoints': [14,32,34,52,79,77,62,89,93,71,65,51,54,42,45,33,30]
 }
 ] },
-{ 'category': 'Роллер Лайт',
+{ 'category':
+{ 'name': 'Роллер Лайт',
+  'key': 'roller-light' },
 'teams' : [
 { 
 'number': 503,
@@ -2028,7 +2038,9 @@
 'checkpoints': [11,26,37,60,59,80,35,24,27,13,14,15,16,17,23,18]
 }
 ] },
-{ 'category': 'Роллер Про',
+{ 'category': 
+{ 'name': 'Роллер Про',
+  'key': 'roller-pro' },
 'teams' : [
 { 
 'number': 609,
