@@ -2,6 +2,7 @@ require 'net/http'
 
 cat_keys = [ 'b-l', 'b-p', 'v-l' , 'v-p' ]
 cat_names = [ 'Бег Лайт', 'Бег Про', 'Вело Лайт', 'Вело Про' ]
+cat_codenames = [ 'run-light', 'run-pro', 'rider-light', 'rider-pro' ]
 
 File.open('results.js', 'w') do |resfile|
   resfile.puts "(["
@@ -22,7 +23,8 @@ File.open('results.js', 'w') do |resfile|
     end
   
     # Parse and fill results.js
-    resfile.puts "{ 'category': '#{cat_names[index]}',"
+    resfile.puts "{ 'category_name': '#{cat_names[index]}',"
+    resfile.puts "'category_key': '#{cat_codenames[index]}',"
     resfile.puts "'teams' : ["
     records = []
     page.each_line do |line| 
