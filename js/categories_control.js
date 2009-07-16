@@ -7,6 +7,7 @@
  */
 function CategoriesControl(categories) {
   this.categories = categories;
+  this.currentCategory = 'all';
   this.controlPanels = [];
 }
 
@@ -51,6 +52,28 @@ CategoriesControl.prototype.makeControlPanel = function() {
   return container;
 }
 
+/**
+ * Emulates clicking on a category control button.
+ * @param key {String} Codename of category group which is to be selected.
+ */
+CategoriesControl.prototype.selectCategory = function(key) {
+  var points = Event.CURRENT.getPointsByCategoryGroup(key);
+  
+  MAP.clear();
+  MAP.putPoints(points);
+  
+  CheckpointsList.instance.clear();
+  CheckpointsList.instance.print(points);
+  ResultsList.instance.resetHighlighting();
+    
+  for (var i = 0; i < this.controlPanels.length; i++) {
+    this.controlPanels[i].children('.catControlSelectedButton').removeClass('catControlSelectedButton');
+    this.controlPanels[i].children('#catCPButton_' + key).addClass('catControlSelectedButton');
+  }
+  
+  this.currentCategory = key;
+}
+
 /************************************** PRIVATE METHODS ******************************************/
 
 /**
@@ -66,20 +89,6 @@ CategoriesControl.prototype.makeCategoryElement = function(name, key) {
     .attr('id', 'catCPButton_' + key);
   
   var outer = this;
-  button.click(function() {
-    var points = Event.CURRENT.getPointsByCategoryGroup(key);
-    
-    MAP.clear();
-    MAP.putPoints(points);
-    
-    CheckpointsList.instance.clear();
-    CheckpointsList.instance.print(points);
-    ResultsList.instance.resetHighlighting();
-      
-    for (var i = 0; i < outer.controlPanels.length; i++) {
-      outer.controlPanels[i].children('.catControlSelectedButton').removeClass('catControlSelectedButton');
-      outer.controlPanels[i].children('#catCPButton_' + key).addClass('catControlSelectedButton');
-    }
-  });
+  button.click(function() { outer.selectCategory(key); });
   return button;
 }

@@ -23,7 +23,7 @@ ResultsList.prototype.printCategoryResults = function(i) {
   var li = new$('li')
     .append(new$('span').addClass('link').addClass('cat_name')
       .click(function() { $('#cat_' + i).slideToggle(); })
-      .text(res.category));
+      .text(res.category.name));
   
   var table = new$('table').addClass('results')
     .append(new$('th').text('#'))
@@ -55,6 +55,10 @@ ResultsList.prototype.printTeamResult = function(j, res) {
     .append(new$('td').addClass('place').html(placeNum))
     .append(new$('td').addClass('link')
       .click(function() { 
+        if (Event.CURRENT.findGroupForCategoryKey(res.category.key).key != 
+            MAP.categoriesControl.currentCategory) {
+          MAP.categoriesControl.selectCategory('all');
+        }
         MAP.showRoute(t.checkpoints);
         outer.highlightSelected($(this));
       })
