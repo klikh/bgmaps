@@ -14,17 +14,16 @@ Array.prototype.removeDuplicates = function() {
  * Helpful function for implementing inheritance in Javascript.
  * If you want class A to extend class B, use the following:
  * function A() {
+ *   A.extend(B);
  *   A.base.call(this, <other parameters of parent constructor>);
  * }
- * A.extend(B);
  * Note 'extend' (without 's' at the end): 'extends' is a probable future reserved word.
  */
 Function.prototype.extend = function(base){
- function Closure(){}
- Closure.prototype = base.prototype;
- this.prototype = new Closure();
- this.prototype.constructor = this.constructor;
- this.base = base;
+  for (var prop in base.prototype) {
+    this.prototype[prop] = base.prototype[prop];
+  }
+  this.base = base;
 }
 
 /**

@@ -1,4 +1,5 @@
 function BGMap() {
+  BGMap.extend(GMap2);
   BGMap.base.call(this, get$("map"));
   
   this.pointsToMarkers = new Hashtable();
@@ -9,7 +10,6 @@ function BGMap() {
   this.setUIToDefault();
   this.setMapType(G_NORMAL_MAP);
 }
-BGMap.extend(GMap2);
 
 BGMap.prototype.putPoints = function(points, initial) {
   //start point
