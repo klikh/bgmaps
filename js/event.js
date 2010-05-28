@@ -1,13 +1,14 @@
 Event.RUN_GROUP = (new CategoryGroup('run', 'Бег')).add(Category.RUN_LIGHT).add(Category.RUN_PRO);
 Event.RIDER_GROUP = (new CategoryGroup('rider', 'Вело')).add(Category.RIDER_LIGHT).add(Category.RIDER_PRO);
-Event.ROLLER_GROUP = (new CategoryGroup('roller', 'Роллер')).add(Category.ROLLER_LIGHT).add(Category.ROLLER_PRO);
+Event.ROLLER_GROUP = (new CategoryGroup('roller', 'Роллер')).add(Category.ROLLER_LIGHT).add(Category.ROLLER_PRO).add(Category.FREAK);
 
 Event.ALL_EVENTS = [
   new Event('dvg2009', 'День в Городе 2009', Category.ROGAIN_CATEGORIES, [Event.RUN_GROUP, Event.RIDER_GROUP, Event.ROLLER_GROUP]),
-  new Event('nvg2009', 'Ночь в Городе — Пушкин 2009', Category.ROGAIN_CATEGORIES_NO_ROLLER, [Event.RUN_GROUP, Event.RIDER_GROUP])
+  new Event('nvg2009', 'Ночь в Городе — Пушкин 2009', Category.ROGAIN_CATEGORIES_NO_ROLLER, [Event.RUN_GROUP, Event.RIDER_GROUP]),
+  new Event('dvg2010', 'День в Городе 2010', Category.ROGAIN_CATEGORIES.push(Category.FREAK), [Event.RUN_GROUP, Event.RIDER_GROUP, Event.ROLLER_GROUP])
 ];
 
-Event.DEFAULT = Event.ALL_EVENTS[0];
+Event.DEFAULT = Event.ALL_EVENTS[2];
 Event.CURRENT = Event.DEFAULT;
 
 function Event(key, name, categories, categoryGroups) {

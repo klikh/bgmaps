@@ -1,20 +1,20 @@
 require 'net/http'
 
-cat_keys = [ 'b-l', 'b-p', 'v-l' , 'v-p' ]
-cat_names = [ 'Бег Лайт', 'Бег Про', 'Вело Лайт', 'Вело Про' ]
-cat_codenames = [ 'run-light', 'run-pro', 'rider-light', 'rider-pro' ]
+cat_keys = [ 'b-l', 'b-p', 'v-l' , 'v-p', 'r-l', 'r-p', 'freak' ]
+cat_names = [ 'Бег Лайт', 'Бег Про', 'Вело Лайт', 'Вело Про', 'Роллер Лайт', 'Роллер Про', 'Фрик' ]
+cat_codenames = [ 'run-light', 'run-pro', 'rider-light', 'rider-pro', 'roller-light', 'roller-pro', 'freak' ]
 
 File.open('results.js', 'w') do |resfile|
   resfile.puts "(["
   
   cat_keys.each_with_index do |page_key, index|
     # Save results from web-pages
-    File.open("#{page_key}_cp1251.html", 'w') do |output|
-      output.puts Net::HTTP.get('www.runcity.ru', "/events/nightinpushkin2009/result/#{page_key}/")
+    File.open("#{page_key}.html", 'w') do |output|
+      output.puts Net::HTTP.get('www.runcity.ru', "/events/dayinspb2010/result/#{page_key}/")
     end
     # Fix encoding
-    system("iconv --from-code=CP1251 --to-code=UTF-8 #{page_key}_cp1251.html > #{page_key}.html")
-    system("rm #{page_key}_cp1251.html")
+#    system("iconv --from-code=CP1251 --to-code=UTF-8 #{page_key}_cp1251.html > #{page_key}.html")
+#    system("rm #{page_key}_cp1251.html")
   
     # Read from saved file
     page = ""

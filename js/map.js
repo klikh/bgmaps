@@ -95,6 +95,8 @@ BGMap.prototype.clear = function() {
     this.removeOverlay(markers[i]);
   }
   this.pointsToMarkers = new Hashtable();
+  
+  purge(document.getElementById('all'));
 }
 
 
