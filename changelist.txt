@@ -1,4 +1,9 @@
-Git branch: bgmaps_rel_2_0
+=== 2.5 ===
+"Categories control"
+* Added control to the map which allows to filter checkpoints by categories groups.
+* Large refactoring.
+* Several fixes and improvements.
+* Added information for the "Day in Spb 2010" event.
 
 === 2.0 ===
 "Multiple events"
