@@ -4,6 +4,7 @@ Category.RIDER_LIGHT = new Category('rider-light', 'Вело Лайт');
 Category.RIDER_PRO = new Category('rider-pro', 'Вело Про');
 Category.ROLLER_LIGHT = new Category('roller-light', 'Роллер Лайт');
 Category.ROLLER_PRO = new Category('roller-pro', 'Роллер Про');
+Category.ROLLER = new Category('roller', 'Роллер');
 Category.FREAK = new Category('freak', 'Фрик');
 
 Category.ROGAIN_CATEGORIES = [Category.RUN_LIGHT, Category.RUN_PRO, Category.RIDER_LIGHT, Category.RIDER_PRO, Category.ROLLER_LIGHT, Category.ROLLER_PRO];
