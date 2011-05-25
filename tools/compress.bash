@@ -25,7 +25,7 @@ rm $output/_script.js $output/_style.css
 
 echo "Modifying htmls to link right js and css..."
 
-tools/sedml.sh $output/event.html 's/<!-- JAVASCRIPT_BEGIN .* JAVASCRIPT_END -->/  <script src="http:\/\/maps.google.com\/maps\?file=api\&amp\;v=2\&amp\;sensor=false\&amp\;key=ABQIAAAAgviLovAtMLUj4bsG5hDQfhTQtjlvjkD_s50C9vfU31409gl63RSBJPEyRgjnnFAxLpKOM-uD_kHVqg" type="text\/javascript"><\/script>\
+tools/sedml.sh $output/event.html 's/<!-- JAVASCRIPT_BEGIN .* JAVASCRIPT_END -->/  <script src="http:\/\/maps.google.com\/maps\?file=api\&amp\;v=2\&amp\;sensor=false\&amp\;key=ABQIAAAAgviLovAtMLUj4bsG5hDQfhTsGiFi_rGis_BT3KpfiM6EgD0bJBTMrCtDySuTkeI-LPu5HoVpyvfLPg" type="text\/javascript"><\/script>\
   <script src="script.js" type="text\/javascript"><\/script>/'
   
 for html in `ls $output/*.html` 
