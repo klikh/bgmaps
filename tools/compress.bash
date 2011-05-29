@@ -1,11 +1,10 @@
 #!/bin/bash
 output=$1
-if [ -z $output ]
+if [[ -z $output ]]
 then
   echo "No output dir specified"
   exit 1
 fi
-rm -rf $output
 mkdir -p $output
 
 echo "Copying unmodified files..."
