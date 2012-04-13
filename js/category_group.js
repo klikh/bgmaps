@@ -18,4 +18,4 @@ function CategoryGroup(key, name, abbr) {
 CategoryGroup.prototype.add = function(category) {
   this.categories.push(category);
   return this;
-}
+};

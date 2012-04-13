@@ -36,11 +36,11 @@ Event.get = function(key) {
     }
   }
   return null;
-}
+};
 
 Event.setCurrent = function(event) {
   Event.CURRENT = event;
-}
+};
 
 Event.prototype.findGroupForCategoryKey = function(key) {
   for (var i = 0; i < this.categoryGroups.length; i++) {
@@ -52,7 +52,7 @@ Event.prototype.findGroupForCategoryKey = function(key) {
     }
   }
   return null;
-}
+};
 
 Event.prototype.findGroupsForCategoryKeys = function(categoryKeys) {
   var groups = [];
@@ -60,11 +60,11 @@ Event.prototype.findGroupsForCategoryKeys = function(categoryKeys) {
     groups.push(this.findGroupForCategoryKey(categoryKeys[i]));
   }
   return groups.removeDuplicates();
-}
+};
 
 Event.prototype.setPoints = function(points) {
   this.points = points;
-}
+};
 
 Event.prototype.findPointById = function(id) {
   for (var i = 0; i < this.points.length; i++) {
@@ -72,7 +72,7 @@ Event.prototype.findPointById = function(id) {
       return this.points[i];
     }
   }
-}
+};
 
 Event.prototype.getPointsByCategoryGroup = function(key) {
   if (key == 'all') {
@@ -87,7 +87,7 @@ Event.prototype.getPointsByCategoryGroup = function(key) {
     }
   }
   return points;
-}
+};
 
 Event.prototype.doesPointContainInGroup = function(point, group) {
   for (var i = 0; i < group.categories.length; i++) {
@@ -98,7 +98,7 @@ Event.prototype.doesPointContainInGroup = function(point, group) {
     }
   }
   return false;
-}
+};
 
 Event.prototype.findGroupByKey = function(key) {
   for (var i = 0; i < this.categoryGroups.length; i++) {
@@ -106,4 +106,4 @@ Event.prototype.findGroupByKey = function(key) {
       return this.categoryGroups[i];
     }
   }
-}
+};

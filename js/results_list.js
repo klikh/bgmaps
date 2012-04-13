@@ -13,7 +13,7 @@ ResultsList.prototype.print = function() {
     list.append(this.printCategoryResults(i));
   }
   list.appendTo('#results');
-}
+};
 
 /******************************** PRIVATE METHODS ********************************/
 
@@ -39,7 +39,7 @@ ResultsList.prototype.printCategoryResults = function(i) {
     .append(table)
     .appendTo(li);
   return li;
-}
+};
 
 ResultsList.prototype.printTeamResult = function(j, res) {
   var t = res.teams[j];
@@ -65,7 +65,7 @@ ResultsList.prototype.printTeamResult = function(j, res) {
       .html(warn + t.title))
     .append(new$('td').text(t.count))
     .append(new$('td').text(t.time));
-}
+};
 
 ResultsList.prototype.resultHasUndefinedCheckpoint = function(checkpoints) {
   for (var i = 0; i < checkpoints.length; i++) {
@@ -74,7 +74,7 @@ ResultsList.prototype.resultHasUndefinedCheckpoint = function(checkpoints) {
     }
   }
   return false;
-}
+};
 
 /**
  * Highlights the selected team result in the list.
@@ -85,11 +85,12 @@ ResultsList.prototype.resultHasUndefinedCheckpoint = function(checkpoints) {
 ResultsList.prototype.highlightSelected = function(obj) {
   this.resetHighlighting();
   obj.addClass('selectedResult');
-}
+};
 
 /**
  * Removes highlighting from all result rows.
  */
 ResultsList.prototype.resetHighlighting = function() {
   $('#results td.selectedResult').removeClass('selectedResult');
-}
+};
+

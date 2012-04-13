@@ -33,14 +33,14 @@ CheckpointsList.prototype.print = function(checkpoints) {
     .append(new$('span').text('Категории: '))
     .append(MAP.categoriesControl.makeControlPanel())
     .prependTo($('#checkpoints'));
-}
+};
 
 /**
  * Clears the list from all checkpoints.
  */
 CheckpointsList.prototype.clear = function() {
   $('#checkpoints').empty();
-}
+};
 
 /**
  * Highlights the selected checkpoint in the list.
@@ -50,11 +50,11 @@ CheckpointsList.prototype.clear = function() {
 CheckpointsList.prototype.highlightSelectedCheckpoint = function(cpid) {
   this.resetHighlighting();
   $('#checkpoints td[data-cpid=' + cpid + ']').addClass('selectedCheckpoint');
-}
+};
 
 /**
  * Removes highlighting from all checkpoints rows.
  */
 CheckpointsList.prototype.resetHighlighting = function() {
   $('#checkpoints td.selectedCheckpoint').removeClass('selectedCheckpoint');
-}
+};

@@ -8,7 +8,7 @@ Array.prototype.removeDuplicates = function() {
     if (this[i-1] == this[i]) { this.splice(i, 1); }
   }
   return this;
-}
+};
 
 /**
  * Helpful function for implementing inheritance in Javascript.
@@ -24,7 +24,7 @@ Function.prototype.extend = function(base){
     this.prototype[prop] = base.prototype[prop];
   }
   this.base = base;
-}
+};
 
 /**
 * Synonym for $(document.createElement).

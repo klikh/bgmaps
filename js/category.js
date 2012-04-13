@@ -26,4 +26,4 @@ function Category(key, name, abbr) {
   
 }
 
-Category.prototype.abbr = function() { return this.abbr; }
+Category.prototype.abbr = function() { return this.abbr; };
