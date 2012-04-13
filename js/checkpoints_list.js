@@ -1,4 +1,4 @@
-﻿/**
+/**
  * List of all checkpoints.
  * It is intended to be a singleton, so use CheckpointsList.instance
  */
