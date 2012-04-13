@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Control which allows to filter checkpoints by category.
  * Initially is a part of GMap and extends GControl.
  * Can have multiple control panels, which act identically and reflect self state to each other.

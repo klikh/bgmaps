@@ -1,4 +1,4 @@
-function BGMap() {
+﻿function BGMap() {
   BGMap.extend(GMap2);
   BGMap.base.call(this, get$("map"));
   

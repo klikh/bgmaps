@@ -1,4 +1,4 @@
-function CategoryGroup(key, name, abbr) {
+﻿function CategoryGroup(key, name, abbr) {
   this.key = key;
   this.name = name;
   this.categories = [];

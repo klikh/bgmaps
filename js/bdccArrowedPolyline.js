@@ -1,4 +1,4 @@
-// Polyline with arrows
+﻿// Polyline with arrows
 //
 // (C) 2008 Bill Chadwick May
 //

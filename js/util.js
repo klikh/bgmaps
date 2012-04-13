@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Removes all duplicates from the given array. 
  * Array can be not sorted - it is sorted in this method anyway
  */

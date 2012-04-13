@@ -1,4 +1,4 @@
-function ResultsList() {
+﻿function ResultsList() {
 }
 ResultsList.instance = new ResultsList();
 

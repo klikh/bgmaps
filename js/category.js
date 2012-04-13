@@ -1,4 +1,4 @@
-Category.RUN_LIGHT = new Category('run-light', 'Бег Лайт');
+﻿Category.RUN_LIGHT = new Category('run-light', 'Бег Лайт');
 Category.RUN_PRO = new Category('run-pro', 'Бег Про');
 Category.RIDER_LIGHT = new Category('rider-light', 'Вело Лайт');
 Category.RIDER_PRO = new Category('rider-pro', 'Вело Про');
