@@ -1,4 +1,4 @@
-Event.RUN_GROUP = (new CategoryGroup('run', 'Бег')).add(Category.RUN_LIGHT).add(Category.RUN_PRO);
+﻿Event.RUN_GROUP = (new CategoryGroup('run', 'Бег')).add(Category.RUN_LIGHT).add(Category.RUN_PRO);
 Event.RIDER_GROUP = (new CategoryGroup('rider', 'Вело')).add(Category.RIDER_LIGHT).add(Category.RIDER_PRO);
 Event.ROLLER_GROUP = (new CategoryGroup('roller', 'Роллер')).add(Category.ROLLER_LIGHT).add(Category.ROLLER_PRO).add(Category.ROLLER).add(Category.FREAK);
 
