@@ -9,7 +9,7 @@ Event.ALL_EVENTS = [
   new Event('dvg2011', 'День в Городе 2011', Category.ROGAIN_CATEGORIES_NO_ROLLER.push(Category.ROLLER, Category.FREAK), [Event.RUN_GROUP, Event.RIDER_GROUP, Event.ROLLER_GROUP])
 ];
 
-Event.DEFAULT = Event.ALL_EVENTS[3];
+Event.DEFAULT = Event.ALL_EVENTS[Event.ALL_EVENTS.length - 1];
 Event.CURRENT = Event.DEFAULT;
 
 function Event(key, name, categories, categoryGroups) {
