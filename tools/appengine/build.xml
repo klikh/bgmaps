@@ -1,0 +1,119 @@
+<project default="all" name="RunCity tracks visualizer Google App Engine deployer">
+    <property file="user.properties" />
+    <property file="build.properties" />
+
+    <target name="deploy" depends="all, prepare-deploy, do-deploy" />
+    <target name="all" depends="prepare, compile"/>
+
+    <target name="prepare">
+        <!-- TODO Check if Ant version is supported -->
+        <!-- TODO Check if AppEngine SDK specified correctly -->
+    </target>
+
+    <target name="compile">
+        <!-- Nothing to compile right now -->
+    </target>
+
+    <target name="prepare-deploy">
+        <mkdir dir="${output.dir}"/>
+
+        <copy todir="${output.dir}">
+            <fileset dir="${root.dir}" includes="war/**"/>
+        </copy>
+
+        <copy todir="${output.war.dir}">
+            <fileset dir="${bgmaps.root.dir}">
+                <!--
+                cp -r index.html event.html changelist.txt img results points $output
+                -->
+                <include name="img/**"/>
+                <include name="results/**"/>
+                <include name="points/**"/>
+                <include name="event.html"/>
+                <include name="index.html"/>
+            </fileset>
+        </copy>
+
+        <!-- Ant hacker: prepare input for yui-compressor
+            all css files listed between CSS_BEGIN and CSS_END
+            and all js files listed between JAVASCRIPT_BEGIN and JAVASCRIPT_END
+            will be compressed with yui-compressor into one file.
+          -->
+        <copy file="${bgmaps.root.dir}/event.html" tofile="${output.dir}/_tmp_event.css"/>
+        <copy file="${bgmaps.root.dir}/event.html" tofile="${output.dir}/_tmp_event.js"/>
+        <replaceregexp file="${output.dir}/_tmp_event.css" encoding="UTF-8"
+                       match=".*!-- CSS_BEGIN --.(.*).!-- CSS_END --.*"
+                       flags="s"
+                       replace="\1"
+                       byline="false"/>
+        <replaceregexp file="${output.dir}/_tmp_event.css" encoding="UTF-8"
+                       match=".*link href=.(.*). rel=.stylesheet. type=.text/css.*"
+                       replace="${bgmaps.root.dir}/\1 "
+                       byline="true"/>
+        <replaceregexp file="${output.dir}/_tmp_event.js" encoding="UTF-8"
+                       match=".*!-- JAVASCRIPT_BEGIN --.(.*).!-- JAVASCRIPT_END --.*"
+                       flags="s"
+                       replace="\1"
+                       byline="false"/>
+        <replaceregexp file="${output.dir}/_tmp_event.js" encoding="UTF-8"
+                       match=".*script src=.(js.*). type=.text/javascript.*"
+                       replace="${bgmaps.root.dir}/\1 "
+                       byline="true"/>
+        <loadfile property="css.files" srcFile="${output.dir}/_tmp_event.css">
+            <filterchain>
+                <striplinebreaks/>
+            </filterchain>
+        </loadfile>
+        <loadfile property="js.files" srcFile="${output.dir}/_tmp_event.js">
+            <filterchain>
+                <striplinebreaks/>
+            </filterchain>
+        </loadfile>
+
+        <echo message="Merging: ${css.files}"/>
+        <concat dest="${output.dir}/_tmp_event.css" append="false" fixlastline="true" encoding="UTF-8" outputencoding="UTF-8">
+            <filelist files="${css.files}"/>
+        </concat>
+        <echo message="Merging: ${js.files}"/>
+        <concat dest="${output.dir}/_tmp_event.js" append="false" binary="true" >
+            <filelist files="${js.files}"/>
+        </concat>
+
+        <!-- Running yui-compressor with file list -->
+        <java jar="${bgmaps.root.dir}/tools/yuicompressor-2.4.2.jar"
+              args="--type css -o ${output.css} ${output.dir}/_tmp_event.css"
+              fork="true" failonerror="true"/>
+        <java jar="${bgmaps.root.dir}/tools/yuicompressor-2.4.2.jar"
+              args="--type js -o ${output.js} ${output.dir}/_tmp_event.js"
+              fork="true" failonerror="true"/>
+
+        <!-- Replacing final file -->
+        <replaceregexp file="${output.war.dir}/index.html" encoding="UTF-8"
+                       match=".!-- CSS_BEGIN --.(.*).!-- CSS_END --."
+                       flags="s"
+                       replace="  &lt;link href='${compressed.css.name}' rel='stylesheet' type='text/css' />"
+                       byline="false"/>
+
+        <replaceregexp file="${output.war.dir}/event.html" encoding="UTF-8"
+                       match=".!-- CSS_BEGIN --.(.*).!-- CSS_END --."
+                       flags="s"
+                       replace="  &lt;link href='${compressed.css.name}' rel='stylesheet' type='text/css' />"
+                       byline="false"/>
+
+        <replaceregexp file="${output.war.dir}/event.html" encoding="UTF-8"
+                       match=".!-- JAVASCRIPT_BEGIN --.(.*).!-- JAVASCRIPT_END --."
+                       flags="s"
+                       replace="  &lt;script src='${compressed.js.name}' type='text/javascript'>\&lt;/script>"
+                       byline="false"/>
+
+        <delete file="${output.dir}/_tmp_event.css"/>
+        <delete file="${output.dir}/_tmp_event.js"/>
+    </target>
+
+    <target name="do-deploy">
+    </target>
+
+    <target name="clean">
+        <delete dir="${output.dir}"/>
+    </target>
+</project>
