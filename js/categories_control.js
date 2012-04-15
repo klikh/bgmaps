@@ -21,14 +21,14 @@ CategoriesControl.prototype.initialize = function(map) {
   var container = this.makeControlPanel().context; // using 'context' because we need DOM element, not JQuery
   map.getContainer().appendChild(container); 
   return container;
-}
+};
 
 /**
  * Required by GControl. Called when control is placed on the map by GMap2.addControl().
  */
 CategoriesControl.prototype.getDefaultPosition = function() {
   return new GControlPosition(G_ANCHOR_TOP_LEFT, new GSize(70, 10));
-}
+};
 
 /**
  * Creates a control panel to filter checkpoints and returns it as a JQuery object
@@ -50,7 +50,7 @@ CategoriesControl.prototype.makeControlPanel = function() {
   
   this.controlPanels.push(container); // we can have multiple control panels
   return container;
-}
+};
 
 /**
  * Emulates clicking on a category control button.
@@ -72,7 +72,7 @@ CategoriesControl.prototype.selectCategory = function(key) {
   }
   
   this.currentCategory = key;
-}
+};
 
 /************************************** PRIVATE METHODS ******************************************/
 
@@ -83,10 +83,11 @@ CategoriesControl.prototype.selectCategory = function(key) {
  * @return {JQuery} SPAN with the button.
  */
 CategoriesControl.prototype.makeCategoryElement = function(name, key) {
+  var tooltipText;
   if (key == 'all') {
-    var tooltipText = 'Показать все категории';
+    tooltipText = 'Показать все категории';
   } else {
-    var tooltipText = 'Показать только КП категории «' + name + '»'
+    tooltipText = 'Показать только КП категории «' + name + '»'
   }
   
   var button = new$('a')
@@ -99,4 +100,4 @@ CategoriesControl.prototype.makeCategoryElement = function(name, key) {
   var outer = this;
   button.click(function() { outer.selectCategory(key); return false; });
   return button;
-}
+};

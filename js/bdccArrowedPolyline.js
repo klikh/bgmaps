@@ -74,14 +74,14 @@ BDCCArrowedPolyline.prototype.initialize = function(map) {
     this.map.addOverlay(this.line);
     
     this.recalc();
-}
+};
 
 BDCCArrowedPolyline.prototype.remove = function() {
     this.map.removeOverlay(this.line);
     this.removeHeadsOverlays();
     GEvent.removeListener(this.zoomEventListener);
     GEvent.removeListener(this.typeEventListener);
-}
+};
 
 BDCCArrowedPolyline.prototype.removeHeadsOverlays = function() {
     try {
@@ -91,19 +91,19 @@ BDCCArrowedPolyline.prototype.removeHeadsOverlays = function() {
     } catch(ex) {
         // do nothing
     }
-}
+};
 
 BDCCArrowedPolyline.prototype.copy = function() {
     return new BDCCArrowedPolyline(this.points,
         this.color, this.weight, this.opacity, 
         this.opts, this.gapPx, this.headLength,
         this.headColor, this.headWeight, this.headOpacity);
-}
+};
 
 BDCCArrowedPolyline.prototype.redraw = function(force) {
     // do nothing, the GPolyline line and heads draw themselves
     return;
-}
+};
 
 BDCCArrowedPolyline.prototype.recalc = function() {
     var zoom = this.map.getZoom();
@@ -159,7 +159,7 @@ BDCCArrowedPolyline.prototype.recalc = function() {
         }
         p1 = p2;
     }
-}
+};
 
 BDCCArrowedPolyline.prototype.addHead = function(x, y, theta, zoom) {
     //add an arrow head at the specified point
@@ -183,4 +183,4 @@ BDCCArrowedPolyline.prototype.addHead = function(x, y, theta, zoom) {
     
     this.heads.push(new GPolyline(pts,this.headColor,this.headWeight,this.headOpacity,this.opts));
     this.map.addOverlay(this.heads[this.heads.length-1]);
-}
+};

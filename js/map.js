@@ -30,8 +30,8 @@ BGMap.prototype.putPoints = function(points, initial) {
         labelText:points[i].id,
         labelClass:markerLabel,
         labelOffset:labelOffset };
-    var marker = new LabeledMarker(point, markerOptions);
-    this.putPointMarkerOnMap(marker, points[i]);
+    var marker2 = new LabeledMarker(point, markerOptions);
+    this.putPointMarkerOnMap(marker2, points[i]);
   }
 
   if (initial) {
@@ -40,7 +40,7 @@ BGMap.prototype.putPoints = function(points, initial) {
   }
   
   this.highlightMapRegion(points);
-}
+};
 
 /**
  * Shows information about checkpoints in a floating bubble above the point's marker.
@@ -51,11 +51,11 @@ BGMap.prototype.showInfo = function(point) {
   CheckpointsList.instance.highlightSelectedCheckpoint(point.id);
   marker.openInfoWindowHtml(BGMap.getInfoHtmlWindow(point)); 
   this.setCenter(marker.getPoint());
-}
+};
 
 /**
  * Shows the route of a team by drawing an arrowed polyline on the map.
- * @param checkpoints Array of numbers - checkpoint ids - in the order of taking checkpoints.
+ * @param checkpoint_numbers Array of numbers - checkpoint ids - in the order of taking checkpoints.
  *                    Start point is not included in this array.
  */
 BGMap.prototype.showRoute = function(checkpoint_numbers) {
@@ -80,7 +80,7 @@ BGMap.prototype.showRoute = function(checkpoint_numbers) {
   this.addOverlay(this.polyline);
   this.highlightMapRegion(checkpoints);
   scrollTo('map');
-}
+};
 
 
 /**
@@ -97,7 +97,7 @@ BGMap.prototype.clear = function() {
   this.pointsToMarkers = new Hashtable();
   
   purge(document.getElementById('all'));
-}
+};
 
 
 /******************************** PRIVATE METHODS ********************************/
@@ -114,7 +114,7 @@ BGMap.prototype.putPointMarkerOnMap = function(marker, point) {
     bgmap.showInfo(point);
   });
   this.pointsToMarkers.put(point, marker);
-}
+};
 
 /**
  * Get HTML for bubble window which is shown on the map when a checkpoint is selected.
@@ -127,12 +127,11 @@ BGMap.getInfoHtmlWindow = function(point) {
     .append(new$('div').addClass('info_name').text(point.name))
     .append(new$('div').addClass('info_task').text(point.task))
     .context;
-}
+};
 
 /**
  * Centralizes and zooms the map, so that all points are visible and centralized.
- * @param sw GLatLng South-West corner of the rectangle.
- * @param ne GLatLng North-East corner of the rectangle. 
+ * @param checkpoints Checkpoints
  */
 BGMap.prototype.highlightMapRegion = function(checkpoints) {
   var rectangle = this.findRoundingRectangle(checkpoints);
@@ -144,13 +143,13 @@ BGMap.prototype.highlightMapRegion = function(checkpoints) {
       sw.lat() + (ne.lat() - sw.lat())/2,
       sw.lng() + (ne.lng() - sw.lng())/2);
   this.setCenter(preferredCenter, preferredZoom); 
-}
+};
 
 /**
  * Finds the smallest rectangle containing all given checkpoints.
  * @param checkpoints Array of checkpoints. Each checkpoint is an object, which
  * has 'coordinates' attribute containing two floats - for x and y coordinates.
- * @param return Array of two GLatLng objects for south-west and north-east corners
+ * @return Array of two GLatLng objects for south-west and north-east corners
  * of the rectangle.
  */
 BGMap.prototype.findRoundingRectangle = function(checkpoints) {
@@ -165,4 +164,4 @@ BGMap.prototype.findRoundingRectangle = function(checkpoints) {
     minLng = Math.min(minLng, checkpoints[i].coordinates[1]);
   }
   return [new GLatLng(minLat, minLng), new GLatLng(maxLat, maxLng)];
-}
+};

@@ -1,0 +1,1644 @@
+commit 47754e74999d36c1a00f162f96d8258d622163b2
+Author: Andrew Porokhin <andrew.porokhin@gmail.com>
+Date:   Fri Apr 13 22:44:30 2012 +0400
+
+    Fixed: javascript warnings, unterminated statement
+
+diff --git a/js/bdccArrowedPolyline.js b/js/bdccArrowedPolyline.js
+old mode 100644
+new mode 100755
+index dcd84a3..aa9652e
+--- a/js/bdccArrowedPolyline.js
++++ b/js/bdccArrowedPolyline.js
+@@ -1,186 +1,186 @@
+-// Polyline with arrows
+-//
+-// (C) 2008 Bill Chadwick May
+-//
+-// Free for any use
+-//
+-
+-// Original: http://wtp2.appspot.com/ArrowLine.htm
+-// (c) 2009 Andrew Porokhin
+-
+-//
+-// How to use:
+-// var pts1 = new Array();
+-// pts1.push (new GLatLng(51.42, -0.97));
+-// pts1.push (new GLatLng(51.43, -0.97));
+-// var poly1 = new BDCCArrowedPolyline(pts1, "#FF0000", 4, 0.3, null, 30, 7, "#0000FF", 2, 0.5);
+-// map.addOverlay(poly1);
+-
+-// TODO: rewrite code with CSS "line with arrow"
+-// TODO: rewrite as child of GPolyline
+-
+-/**
+- * Constructor. First 5 params exactly as GPolyline
+- * then 5 params for Arrow.
+- *
+- * @param points Array with points.
+- * @param color Color of the line.
+- * @param weight Weight of the line.
+- * @param opacity Opacity of the line.
+- * @param opts Additional options for line.
+- * @param gapPx Arrow spacing in pixles.
+- * @param headLength Arrow head length in pixels.
+- * @param headColor Arrow head colour.
+- * @param headWeight Arrow head weight in pixels.
+- * @param headOpacity Arrow head opacity.
+- */
+-function BDCCArrowedPolyline(points, color, weight, opacity, opts, gapPx, headLength, headColor, headWeight, headOpacity) {
+-    this.gapPx = gapPx;
+-    this.points = points;
+-    this.color = color;
+-    this.weight = weight;
+-    this.opacity = opacity;
+-    this.headLength = headLength;
+-    this.headColor = headColor;
+-    this.headWeight = headWeight;
+-    this.headOpacity = headOpacity;
+-    this.opts = opts;
+-    this.heads = new Array();
+-    this.line = null;
+-}
+-
+-/**
+- * Prototype of the GOverlay
+- */
+-BDCCArrowedPolyline.prototype = new GOverlay();
+-
+-/**
+- * Initialize.
+- */
+-BDCCArrowedPolyline.prototype.initialize = function(map) {
+-    this.map = map;
+-    this.prj = this.map.getCurrentMapType().getProjection();
+-    
+-    var rdrw = GEvent.callback(this, this.recalc);
+-    this.zoomEventListener = GEvent.addListener(this.map, "zoomend", function(oldLevel, newLevel) {
+-        rdrw();
+-    });
+-    this.typeEventListener = GEvent.addListener(this.map, "maptypechanged", function() {
+-        rdrw();
+-    });
+-    
+-    // add main polyline
+-    this.line = new GPolyline(this.points, this.color, this.weight, this.opacity, this.opts);
+-    this.map.addOverlay(this.line);
+-    
+-    this.recalc();
+-}
+-
+-BDCCArrowedPolyline.prototype.remove = function() {
+-    this.map.removeOverlay(this.line);
+-    this.removeHeadsOverlays();
+-    GEvent.removeListener(this.zoomEventListener);
+-    GEvent.removeListener(this.typeEventListener);
+-}
+-
+-BDCCArrowedPolyline.prototype.removeHeadsOverlays = function() {
+-    try {
+-        for(var i=0; i<this.heads.length; i++) {
+-            this.map.removeOverlay(this.heads[i]);
+-        }
+-    } catch(ex) {
+-        // do nothing
+-    }
+-}
+-
+-BDCCArrowedPolyline.prototype.copy = function() {
+-    return new BDCCArrowedPolyline(this.points,
+-        this.color, this.weight, this.opacity, 
+-        this.opts, this.gapPx, this.headLength,
+-        this.headColor, this.headWeight, this.headOpacity);
+-}
+-
+-BDCCArrowedPolyline.prototype.redraw = function(force) {
+-    // do nothing, the GPolyline line and heads draw themselves
+-    return;
+-}
+-
+-BDCCArrowedPolyline.prototype.recalc = function() {
+-    var zoom = this.map.getZoom();
+-    
+-    this.removeHeadsOverlays();
+-    
+-    // the arrow heads
+-    this.heads = new Array();
+-
+-    var p1 = this.prj.fromLatLngToPixel(this.points[0],  zoom);//first point
+-    var p2;       //next point
+-    var dx;
+-    var dy;
+-    var sl;       //segment length
+-    var theta;    //segment angle
+-    var ta;       //distance along segment for placing arrows
+-      
+-    for (var i=1; i<this.points.length; i++) {
+-        p2 = this.prj.fromLatLngToPixel(this.points[i], zoom)
+-        dx = p2.x-p1.x;
+-        dy = p2.y-p1.y;
+-        sl = Math.sqrt((dx*dx)+(dy*dy)); 
+-        theta = Math.atan2(-dy,dx);
+-      
+-        j=1;
+-      
+-        if(this.gapPx == 0) {
+-            // just put one arrow at the end of the line
+-            this.addHead(p2.x,p2.y,theta,zoom);
+-        } else if(this.gapPx == 1) {
+-            // just put one arrow in the middle of the line
+-            var x = p1.x + ((sl/2) * Math.cos(theta));
+-            var y = p1.y - ((sl/2) * Math.sin(theta));
+-            this.addHead(x,y,theta,zoom);
+-        } else {
+-            // iterate along the line segment placing arrow markers
+-            // don't put an arrow within gapPx of the beginning or end of the segment 
+-
+-            ta = this.gapPx;
+-            while(ta < sl) {
+-                var x = p1.x + (ta * Math.cos(theta)); 
+-                var y = p1.y - (ta * Math.sin(theta));
+-                this.addHead(x,y,theta,zoom);
+-                ta += this.gapPx;  
+-            }  
+-      
+-            // line too short, put one arrow in its middle
+-            if(ta == this.gapPx) {
+-                var x = p1.x + ((sl/2) * Math.cos(theta)); 
+-                var y = p1.y - ((sl/2) * Math.sin(theta));
+-                this.addHead(x,y,theta,zoom);        
+-            }
+-        }
+-        p1 = p2;
+-    }
+-}
+-
+-BDCCArrowedPolyline.prototype.addHead = function(x, y, theta, zoom) {
+-    //add an arrow head at the specified point
+-    var t = theta + (Math.PI/4) ;
+-    if(t > Math.PI) {
+-        t -= 2*Math.PI;
+-    }
+-    var t2 = theta - (Math.PI/4) ;
+-    if(t2 <= (-Math.PI)) {
+-        t2 += 2*Math.PI;
+-    }
+-    var pts = new Array();
+-    var x1 = x-Math.cos(t)*this.headLength;
+-    var y1 = y+Math.sin(t)*this.headLength;
+-    var x2 = x-Math.cos(t2)*this.headLength;
+-    var y2 = y+Math.sin(t2)*this.headLength;
+-    
+-    pts.push(this.prj.fromPixelToLatLng(new GPoint(x1,y1), zoom));
+-    pts.push(this.prj.fromPixelToLatLng(new GPoint(x,y), zoom));    
+-    pts.push(this.prj.fromPixelToLatLng(new GPoint(x2,y2), zoom));
+-    
+-    this.heads.push(new GPolyline(pts,this.headColor,this.headWeight,this.headOpacity,this.opts));
+-    this.map.addOverlay(this.heads[this.heads.length-1]);
+-}
++// Polyline with arrows
++//
++// (C) 2008 Bill Chadwick May
++//
++// Free for any use
++//
++
++// Original: http://wtp2.appspot.com/ArrowLine.htm
++// (c) 2009 Andrew Porokhin
++
++//
++// How to use:
++// var pts1 = new Array();
++// pts1.push (new GLatLng(51.42, -0.97));
++// pts1.push (new GLatLng(51.43, -0.97));
++// var poly1 = new BDCCArrowedPolyline(pts1, "#FF0000", 4, 0.3, null, 30, 7, "#0000FF", 2, 0.5);
++// map.addOverlay(poly1);
++
++// TODO: rewrite code with CSS "line with arrow"
++// TODO: rewrite as child of GPolyline
++
++/**
++ * Constructor. First 5 params exactly as GPolyline
++ * then 5 params for Arrow.
++ *
++ * @param points Array with points.
++ * @param color Color of the line.
++ * @param weight Weight of the line.
++ * @param opacity Opacity of the line.
++ * @param opts Additional options for line.
++ * @param gapPx Arrow spacing in pixles.
++ * @param headLength Arrow head length in pixels.
++ * @param headColor Arrow head colour.
++ * @param headWeight Arrow head weight in pixels.
++ * @param headOpacity Arrow head opacity.
++ */
++function BDCCArrowedPolyline(points, color, weight, opacity, opts, gapPx, headLength, headColor, headWeight, headOpacity) {
++    this.gapPx = gapPx;
++    this.points = points;
++    this.color = color;
++    this.weight = weight;
++    this.opacity = opacity;
++    this.headLength = headLength;
++    this.headColor = headColor;
++    this.headWeight = headWeight;
++    this.headOpacity = headOpacity;
++    this.opts = opts;
++    this.heads = new Array();
++    this.line = null;
++}
++
++/**
++ * Prototype of the GOverlay
++ */
++BDCCArrowedPolyline.prototype = new GOverlay();
++
++/**
++ * Initialize.
++ */
++BDCCArrowedPolyline.prototype.initialize = function(map) {
++    this.map = map;
++    this.prj = this.map.getCurrentMapType().getProjection();
++    
++    var rdrw = GEvent.callback(this, this.recalc);
++    this.zoomEventListener = GEvent.addListener(this.map, "zoomend", function(oldLevel, newLevel) {
++        rdrw();
++    });
++    this.typeEventListener = GEvent.addListener(this.map, "maptypechanged", function() {
++        rdrw();
++    });
++    
++    // add main polyline
++    this.line = new GPolyline(this.points, this.color, this.weight, this.opacity, this.opts);
++    this.map.addOverlay(this.line);
++    
++    this.recalc();
++};
++
++BDCCArrowedPolyline.prototype.remove = function() {
++    this.map.removeOverlay(this.line);
++    this.removeHeadsOverlays();
++    GEvent.removeListener(this.zoomEventListener);
++    GEvent.removeListener(this.typeEventListener);
++};
++
++BDCCArrowedPolyline.prototype.removeHeadsOverlays = function() {
++    try {
++        for(var i=0; i<this.heads.length; i++) {
++            this.map.removeOverlay(this.heads[i]);
++        }
++    } catch(ex) {
++        // do nothing
++    }
++};
++
++BDCCArrowedPolyline.prototype.copy = function() {
++    return new BDCCArrowedPolyline(this.points,
++        this.color, this.weight, this.opacity, 
++        this.opts, this.gapPx, this.headLength,
++        this.headColor, this.headWeight, this.headOpacity);
++};
++
++BDCCArrowedPolyline.prototype.redraw = function(force) {
++    // do nothing, the GPolyline line and heads draw themselves
++    return;
++};
++
++BDCCArrowedPolyline.prototype.recalc = function() {
++    var zoom = this.map.getZoom();
++    
++    this.removeHeadsOverlays();
++    
++    // the arrow heads
++    this.heads = new Array();
++
++    var p1 = this.prj.fromLatLngToPixel(this.points[0],  zoom);//first point
++    var p2;       //next point
++    var dx;
++    var dy;
++    var sl;       //segment length
++    var theta;    //segment angle
++    var ta;       //distance along segment for placing arrows
++      
++    for (var i=1; i<this.points.length; i++) {
++        p2 = this.prj.fromLatLngToPixel(this.points[i], zoom)
++        dx = p2.x-p1.x;
++        dy = p2.y-p1.y;
++        sl = Math.sqrt((dx*dx)+(dy*dy)); 
++        theta = Math.atan2(-dy,dx);
++      
++        j=1;
++      
++        if(this.gapPx == 0) {
++            // just put one arrow at the end of the line
++            this.addHead(p2.x,p2.y,theta,zoom);
++        } else if(this.gapPx == 1) {
++            // just put one arrow in the middle of the line
++            var x = p1.x + ((sl/2) * Math.cos(theta));
++            var y = p1.y - ((sl/2) * Math.sin(theta));
++            this.addHead(x,y,theta,zoom);
++        } else {
++            // iterate along the line segment placing arrow markers
++            // don't put an arrow within gapPx of the beginning or end of the segment 
++
++            ta = this.gapPx;
++            while(ta < sl) {
++                var x = p1.x + (ta * Math.cos(theta)); 
++                var y = p1.y - (ta * Math.sin(theta));
++                this.addHead(x,y,theta,zoom);
++                ta += this.gapPx;  
++            }  
++      
++            // line too short, put one arrow in its middle
++            if(ta == this.gapPx) {
++                var x = p1.x + ((sl/2) * Math.cos(theta)); 
++                var y = p1.y - ((sl/2) * Math.sin(theta));
++                this.addHead(x,y,theta,zoom);        
++            }
++        }
++        p1 = p2;
++    }
++};
++
++BDCCArrowedPolyline.prototype.addHead = function(x, y, theta, zoom) {
++    //add an arrow head at the specified point
++    var t = theta + (Math.PI/4) ;
++    if(t > Math.PI) {
++        t -= 2*Math.PI;
++    }
++    var t2 = theta - (Math.PI/4) ;
++    if(t2 <= (-Math.PI)) {
++        t2 += 2*Math.PI;
++    }
++    var pts = new Array();
++    var x1 = x-Math.cos(t)*this.headLength;
++    var y1 = y+Math.sin(t)*this.headLength;
++    var x2 = x-Math.cos(t2)*this.headLength;
++    var y2 = y+Math.sin(t2)*this.headLength;
++    
++    pts.push(this.prj.fromPixelToLatLng(new GPoint(x1,y1), zoom));
++    pts.push(this.prj.fromPixelToLatLng(new GPoint(x,y), zoom));    
++    pts.push(this.prj.fromPixelToLatLng(new GPoint(x2,y2), zoom));
++    
++    this.heads.push(new GPolyline(pts,this.headColor,this.headWeight,this.headOpacity,this.opts));
++    this.map.addOverlay(this.heads[this.heads.length-1]);
++};
+diff --git a/js/categories_control.js b/js/categories_control.js
+old mode 100644
+new mode 100755
+index 6f9e45a..42757ac
+--- a/js/categories_control.js
++++ b/js/categories_control.js
+@@ -1,102 +1,103 @@
+-/**
+- * Control which allows to filter checkpoints by category.
+- * Initially is a part of GMap and extends GControl.
+- * Can have multiple control panels, which act identically and reflect self state to each other.
+- * @param {Array} categories Array of checkpoints' categories, which will be displayed 
+- *         on the control. Each category is represented by {Category} class.
+- */
+-function CategoriesControl(categories) {
+-  this.categories = categories;
+-  this.currentCategory = 'all';
+-  this.controlPanels = [];
+-}
+-
+-CategoriesControl.prototype = new GControl();
+-
+-/**
+- * Required by GControl. Called when control is placed on the map by GMap2.addControl().
+- * Here we make a control panel and place it on the map.
+- */
+-CategoriesControl.prototype.initialize = function(map) {
+-  var container = this.makeControlPanel().context; // using 'context' because we need DOM element, not JQuery
+-  map.getContainer().appendChild(container); 
+-  return container;
+-}
+-
+-/**
+- * Required by GControl. Called when control is placed on the map by GMap2.addControl().
+- */
+-CategoriesControl.prototype.getDefaultPosition = function() {
+-  return new GControlPosition(G_ANCHOR_TOP_LEFT, new GSize(70, 10));
+-}
+-
+-/**
+- * Creates a control panel to filter checkpoints and returns it as a JQuery object
+- * holding a DIV with buttons for each category and one for 'all' category (reset filter).
+- * Buttons' look style is configured via catControlButton and catControlSelectedButton CSS styles.
+- * @return JQuery holding a DIV with the control panel.
+- */
+-CategoriesControl.prototype.makeControlPanel = function() {
+-  var container = new$('div');
+-  
+-  this.makeCategoryElement('Все', 'all')  // separately for 'all' pseudo-category
+-    .appendTo(container)
+-    .addClass('catControlSelectedButton');
+-  
+-  // then for all other real categories.
+-  for (var i = 0; i < this.categories.length; i++) {
+-    this.makeCategoryElement(this.categories[i].name, this.categories[i].key).appendTo(container);
+-  }
+-  
+-  this.controlPanels.push(container); // we can have multiple control panels
+-  return container;
+-}
+-
+-/**
+- * Emulates clicking on a category control button.
+- * @param key {String} Codename of category group which is to be selected.
+- */
+-CategoriesControl.prototype.selectCategory = function(key) {
+-  var points = Event.CURRENT.getPointsByCategoryGroup(key);
+-  
+-  MAP.clear();
+-  MAP.putPoints(points);
+-  
+-  CheckpointsList.instance.clear();
+-  CheckpointsList.instance.print(points);
+-  ResultsList.instance.resetHighlighting();
+-    
+-  for (var i = 0; i < this.controlPanels.length; i++) {
+-    this.controlPanels[i].children('.catControlSelectedButton').removeClass('catControlSelectedButton');
+-    this.controlPanels[i].children('#catCPButton_' + key).addClass('catControlSelectedButton');
+-  }
+-  
+-  this.currentCategory = key;
+-}
+-
+-/************************************** PRIVATE METHODS ******************************************/
+-
+-/**
+- * Creates a single SPAN JQuery object holding button to filter by the category it represents.
+- * @param {String} name of the category, which will be displayed on the control.
+- * @param {String} key to the category, which identifies this category in the 'database'.
+- * @return {JQuery} SPAN with the button.
+- */
+-CategoriesControl.prototype.makeCategoryElement = function(name, key) {
+-  if (key == 'all') {
+-    var tooltipText = 'Показать все категории';
+-  } else {
+-    var tooltipText = 'Показать только КП категории «' + name + '»'
+-  }
+-  
+-  var button = new$('a')
+-    .attr('href', '#')
+-    .addClass('tooltip')
+-    .addClass('catControlButton')
+-    .html('<span class="text">' + name + '<img src="img/' + key + '16.png"/></span>' + '<span class="tooltip">' + tooltipText + '</span>')
+-    .attr('id', 'catCPButton_' + key);
+-  
+-  var outer = this;
+-  button.click(function() { outer.selectCategory(key); return false; });
+-  return button;
+-}
+\ No newline at end of file
++/**
++ * Control which allows to filter checkpoints by category.
++ * Initially is a part of GMap and extends GControl.
++ * Can have multiple control panels, which act identically and reflect self state to each other.
++ * @param {Array} categories Array of checkpoints' categories, which will be displayed 
++ *         on the control. Each category is represented by {Category} class.
++ */
++function CategoriesControl(categories) {
++  this.categories = categories;
++  this.currentCategory = 'all';
++  this.controlPanels = [];
++}
++
++CategoriesControl.prototype = new GControl();
++
++/**
++ * Required by GControl. Called when control is placed on the map by GMap2.addControl().
++ * Here we make a control panel and place it on the map.
++ */
++CategoriesControl.prototype.initialize = function(map) {
++  var container = this.makeControlPanel().context; // using 'context' because we need DOM element, not JQuery
++  map.getContainer().appendChild(container); 
++  return container;
++};
++
++/**
++ * Required by GControl. Called when control is placed on the map by GMap2.addControl().
++ */
++CategoriesControl.prototype.getDefaultPosition = function() {
++  return new GControlPosition(G_ANCHOR_TOP_LEFT, new GSize(70, 10));
++};
++
++/**
++ * Creates a control panel to filter checkpoints and returns it as a JQuery object
++ * holding a DIV with buttons for each category and one for 'all' category (reset filter).
++ * Buttons' look style is configured via catControlButton and catControlSelectedButton CSS styles.
++ * @return JQuery holding a DIV with the control panel.
++ */
++CategoriesControl.prototype.makeControlPanel = function() {
++  var container = new$('div');
++  
++  this.makeCategoryElement('Все', 'all')  // separately for 'all' pseudo-category
++    .appendTo(container)
++    .addClass('catControlSelectedButton');
++  
++  // then for all other real categories.
++  for (var i = 0; i < this.categories.length; i++) {
++    this.makeCategoryElement(this.categories[i].name, this.categories[i].key).appendTo(container);
++  }
++  
++  this.controlPanels.push(container); // we can have multiple control panels
++  return container;
++};
++
++/**
++ * Emulates clicking on a category control button.
++ * @param key {String} Codename of category group which is to be selected.
++ */
++CategoriesControl.prototype.selectCategory = function(key) {
++  var points = Event.CURRENT.getPointsByCategoryGroup(key);
++  
++  MAP.clear();
++  MAP.putPoints(points);
++  
++  CheckpointsList.instance.clear();
++  CheckpointsList.instance.print(points);
++  ResultsList.instance.resetHighlighting();
++    
++  for (var i = 0; i < this.controlPanels.length; i++) {
++    this.controlPanels[i].children('.catControlSelectedButton').removeClass('catControlSelectedButton');
++    this.controlPanels[i].children('#catCPButton_' + key).addClass('catControlSelectedButton');
++  }
++  
++  this.currentCategory = key;
++};
++
++/************************************** PRIVATE METHODS ******************************************/
++
++/**
++ * Creates a single SPAN JQuery object holding button to filter by the category it represents.
++ * @param {String} name of the category, which will be displayed on the control.
++ * @param {String} key to the category, which identifies this category in the 'database'.
++ * @return {JQuery} SPAN with the button.
++ */
++CategoriesControl.prototype.makeCategoryElement = function(name, key) {
++  var tooltipText;
++  if (key == 'all') {
++    tooltipText = 'Показать все категории';
++  } else {
++    tooltipText = 'Показать только КП категории «' + name + '»'
++  }
++  
++  var button = new$('a')
++    .attr('href', '#')
++    .addClass('tooltip')
++    .addClass('catControlButton')
++    .html('<span class="text">' + name + '<img src="img/' + key + '16.png"/></span>' + '<span class="tooltip">' + tooltipText + '</span>')
++    .attr('id', 'catCPButton_' + key);
++  
++  var outer = this;
++  button.click(function() { outer.selectCategory(key); return false; });
++  return button;
++};
+diff --git a/js/category.js b/js/category.js
+old mode 100644
+new mode 100755
+index e44a2d2..c538a62
+--- a/js/category.js
++++ b/js/category.js
+@@ -1,29 +1,29 @@
+-Category.RUN_LIGHT = new Category('run-light', 'Бег Лайт');
+-Category.RUN_PRO = new Category('run-pro', 'Бег Про');
+-Category.RIDER_LIGHT = new Category('rider-light', 'Вело Лайт');
+-Category.RIDER_PRO = new Category('rider-pro', 'Вело Про');
+-Category.ROLLER_LIGHT = new Category('roller-light', 'Роллер Лайт');
+-Category.ROLLER_PRO = new Category('roller-pro', 'Роллер Про');
+-Category.ROLLER = new Category('roller', 'Роллер');
+-Category.FREAK = new Category('freak', 'Фрик');
+-
+-Category.ROGAIN_CATEGORIES = [Category.RUN_LIGHT, Category.RUN_PRO, Category.RIDER_LIGHT, Category.RIDER_PRO, Category.ROLLER_LIGHT, Category.ROLLER_PRO];
+-Category.ROGAIN_CATEGORIES_NO_ROLLER = [Category.RUN_LIGHT, Category.RUN_PRO, Category.RIDER_LIGHT, Category.RIDER_PRO];
+-
+-function Category(key, name, abbr) {
+-  this.key = key;
+-  this.name = name;
+-  
+-  if (abbr) {
+-    this.abbr = abbr;
+-  } else {
+-    var words = name.split(' ');
+-    this.abbr = '';
+-    for (i in words) {
+-      this.abbr += words[i][0];
+-    }
+-  }
+-  
+-}
+-
+-Category.prototype.abbr = function() { return this.abbr; }
++Category.RUN_LIGHT = new Category('run-light', 'Бег Лайт');
++Category.RUN_PRO = new Category('run-pro', 'Бег Про');
++Category.RIDER_LIGHT = new Category('rider-light', 'Вело Лайт');
++Category.RIDER_PRO = new Category('rider-pro', 'Вело Про');
++Category.ROLLER_LIGHT = new Category('roller-light', 'Роллер Лайт');
++Category.ROLLER_PRO = new Category('roller-pro', 'Роллер Про');
++Category.ROLLER = new Category('roller', 'Роллер');
++Category.FREAK = new Category('freak', 'Фрик');
++
++Category.ROGAIN_CATEGORIES = [Category.RUN_LIGHT, Category.RUN_PRO, Category.RIDER_LIGHT, Category.RIDER_PRO, Category.ROLLER_LIGHT, Category.ROLLER_PRO];
++Category.ROGAIN_CATEGORIES_NO_ROLLER = [Category.RUN_LIGHT, Category.RUN_PRO, Category.RIDER_LIGHT, Category.RIDER_PRO];
++
++function Category(key, name, abbr) {
++  this.key = key;
++  this.name = name;
++  
++  if (abbr) {
++    this.abbr = abbr;
++  } else {
++    var words = name.split(' ');
++    this.abbr = '';
++    for (i in words) {
++      this.abbr += words[i][0];
++    }
++  }
++  
++}
++
++Category.prototype.abbr = function() { return this.abbr; };
+diff --git a/js/category_group.js b/js/category_group.js
+old mode 100644
+new mode 100755
+index 9acbd27..011e62e
+--- a/js/category_group.js
++++ b/js/category_group.js
+@@ -1,21 +1,21 @@
+-function CategoryGroup(key, name, abbr) {
+-  this.key = key;
+-  this.name = name;
+-  this.categories = [];
+-  
+-  if (abbr) {
+-    this.abbr = abbr;
+-  } else {
+-    var words = name.split(' ');
+-    this.abbr = '';
+-    for (i in words) {
+-      this.abbr += words[i][0];
+-    }
+-  }
+-  
+-}
+-
+-CategoryGroup.prototype.add = function(category) {
+-  this.categories.push(category);
+-  return this;
+-}
++function CategoryGroup(key, name, abbr) {
++  this.key = key;
++  this.name = name;
++  this.categories = [];
++  
++  if (abbr) {
++    this.abbr = abbr;
++  } else {
++    var words = name.split(' ');
++    this.abbr = '';
++    for (i in words) {
++      this.abbr += words[i][0];
++    }
++  }
++  
++}
++
++CategoryGroup.prototype.add = function(category) {
++  this.categories.push(category);
++  return this;
++};
+diff --git a/js/checkpoints_list.js b/js/checkpoints_list.js
+old mode 100644
+new mode 100755
+index 543d992..a0a1b5f
+--- a/js/checkpoints_list.js
++++ b/js/checkpoints_list.js
+@@ -1,60 +1,60 @@
+-﻿/**
+- * List of all checkpoints.
+- * It is intended to be a singleton, so use CheckpointsList.instance
+- */
+-function CheckpointsList() {
+-}
+-CheckpointsList.instance = new CheckpointsList();
+-
+-/**
+- * Prints the table of the given checkpoints (id and address) in <div id="checkpoints">.
+- * Address is clickable: click to show bubble on the map.
+- * @param checkpoints Array of checkpoints to be printed.
+- */
+-CheckpointsList.prototype.print = function(checkpoints) {
+-  var table = new$('table').addClass('results');
+-  for (var i = 0; i < checkpoints.length; i++) {
+-    new$('tr')
+-      .append(new$('td').text(checkpoints[i].id))
+-      .append(new$('td').addClass('link').attr('data-cpid', checkpoints[i].id)
+-        .click(function() { 
+-          var cpid = $(this).attr('data-cpid');
+-          MAP.showInfo(Event.CURRENT.findPointById(cpid));
+-          CheckpointsList.instance.highlightSelectedCheckpoint(cpid);
+-        })
+-        .html(checkpoints[i].name))
+-      .appendTo(table);
+-  }
+-  $('#checkpoints').append(table);
+-  
+-  // control panel to filter by categories
+-  new$('div')
+-    .addClass('categoriesControlPanel')
+-    .append(new$('span').text('Категории: '))
+-    .append(MAP.categoriesControl.makeControlPanel())
+-    .prependTo($('#checkpoints'));
+-}
+-
+-/**
+- * Clears the list from all checkpoints.
+- */
+-CheckpointsList.prototype.clear = function() {
+-  $('#checkpoints').empty();
+-}
+-
+-/**
+- * Highlights the selected checkpoint in the list.
+- * Removes hightlighting from the currently selected if there is one.
+- * @param {Integer} cpid Checkpoint number - i.e. its contest's 'id', written in the points JSON.
+- */
+-CheckpointsList.prototype.highlightSelectedCheckpoint = function(cpid) {
+-  this.resetHighlighting();
+-  $('#checkpoints td[data-cpid=' + cpid + ']').addClass('selectedCheckpoint');
+-}
+-
+-/**
+- * Removes highlighting from all checkpoints rows.
+- */
+-CheckpointsList.prototype.resetHighlighting = function() {
+-  $('#checkpoints td.selectedCheckpoint').removeClass('selectedCheckpoint');
+-}
++﻿/**
++ * List of all checkpoints.
++ * It is intended to be a singleton, so use CheckpointsList.instance
++ */
++function CheckpointsList() {
++}
++CheckpointsList.instance = new CheckpointsList();
++
++/**
++ * Prints the table of the given checkpoints (id and address) in <div id="checkpoints">.
++ * Address is clickable: click to show bubble on the map.
++ * @param checkpoints Array of checkpoints to be printed.
++ */
++CheckpointsList.prototype.print = function(checkpoints) {
++  var table = new$('table').addClass('results');
++  for (var i = 0; i < checkpoints.length; i++) {
++    new$('tr')
++      .append(new$('td').text(checkpoints[i].id))
++      .append(new$('td').addClass('link').attr('data-cpid', checkpoints[i].id)
++        .click(function() { 
++          var cpid = $(this).attr('data-cpid');
++          MAP.showInfo(Event.CURRENT.findPointById(cpid));
++          CheckpointsList.instance.highlightSelectedCheckpoint(cpid);
++        })
++        .html(checkpoints[i].name))
++      .appendTo(table);
++  }
++  $('#checkpoints').append(table);
++  
++  // control panel to filter by categories
++  new$('div')
++    .addClass('categoriesControlPanel')
++    .append(new$('span').text('Категории: '))
++    .append(MAP.categoriesControl.makeControlPanel())
++    .prependTo($('#checkpoints'));
++};
++
++/**
++ * Clears the list from all checkpoints.
++ */
++CheckpointsList.prototype.clear = function() {
++  $('#checkpoints').empty();
++};
++
++/**
++ * Highlights the selected checkpoint in the list.
++ * Removes hightlighting from the currently selected if there is one.
++ * @param {Integer} cpid Checkpoint number - i.e. its contest's 'id', written in the points JSON.
++ */
++CheckpointsList.prototype.highlightSelectedCheckpoint = function(cpid) {
++  this.resetHighlighting();
++  $('#checkpoints td[data-cpid=' + cpid + ']').addClass('selectedCheckpoint');
++};
++
++/**
++ * Removes highlighting from all checkpoints rows.
++ */
++CheckpointsList.prototype.resetHighlighting = function() {
++  $('#checkpoints td.selectedCheckpoint').removeClass('selectedCheckpoint');
++};
+diff --git a/js/event.js b/js/event.js
+index 28e243c..152a860 100755
+--- a/js/event.js
++++ b/js/event.js
+@@ -36,11 +36,11 @@ Event.get = function(key) {
+     }
+   }
+   return null;
+-}
++};
+ 
+ Event.setCurrent = function(event) {
+   Event.CURRENT = event;
+-}
++};
+ 
+ Event.prototype.findGroupForCategoryKey = function(key) {
+   for (var i = 0; i < this.categoryGroups.length; i++) {
+@@ -52,7 +52,7 @@ Event.prototype.findGroupForCategoryKey = function(key) {
+     }
+   }
+   return null;
+-}
++};
+ 
+ Event.prototype.findGroupsForCategoryKeys = function(categoryKeys) {
+   var groups = [];
+@@ -60,11 +60,11 @@ Event.prototype.findGroupsForCategoryKeys = function(categoryKeys) {
+     groups.push(this.findGroupForCategoryKey(categoryKeys[i]));
+   }
+   return groups.removeDuplicates();
+-}
++};
+ 
+ Event.prototype.setPoints = function(points) {
+   this.points = points;
+-}
++};
+ 
+ Event.prototype.findPointById = function(id) {
+   for (var i = 0; i < this.points.length; i++) {
+@@ -72,7 +72,7 @@ Event.prototype.findPointById = function(id) {
+       return this.points[i];
+     }
+   }
+-}
++};
+ 
+ Event.prototype.getPointsByCategoryGroup = function(key) {
+   if (key == 'all') {
+@@ -87,7 +87,7 @@ Event.prototype.getPointsByCategoryGroup = function(key) {
+     }
+   }
+   return points;
+-}
++};
+ 
+ Event.prototype.doesPointContainInGroup = function(point, group) {
+   for (var i = 0; i < group.categories.length; i++) {
+@@ -98,7 +98,7 @@ Event.prototype.doesPointContainInGroup = function(point, group) {
+     }
+   }
+   return false;
+-}
++};
+ 
+ Event.prototype.findGroupByKey = function(key) {
+   for (var i = 0; i < this.categoryGroups.length; i++) {
+@@ -106,4 +106,4 @@ Event.prototype.findGroupByKey = function(key) {
+       return this.categoryGroups[i];
+     }
+   }
+-}
+\ No newline at end of file
++};
+diff --git a/js/map.js b/js/map.js
+old mode 100644
+new mode 100755
+index cdb0215..07e89b0
+--- a/js/map.js
++++ b/js/map.js
+@@ -1,168 +1,167 @@
+-function BGMap() {
+-  BGMap.extend(GMap2);
+-  BGMap.base.call(this, get$("map"));
+-  
+-  this.pointsToMarkers = new Hashtable();
+-  this.startPoint = null;
+-  this.polyline = null;
+-  this.categoriesControl = null;
+-  
+-  this.setUIToDefault();
+-  this.setMapType(G_NORMAL_MAP);
+-}
+-
+-BGMap.prototype.putPoints = function(points, initial) {
+-  //start point
+-  this.startPoint = new GLatLng(points[0].coordinates[0], points[0].coordinates[1]);
+-  var startIcon = new GIcon(G_DEFAULT_ICON, "img/start.png");
+-  var marker = new GMarker(this.startPoint, startIcon);
+-  this.putPointMarkerOnMap(marker, points[0]);
+-  
+-  //other points
+-  var pointIcon = new GIcon(G_DEFAULT_ICON, "img/cleanmarker.png");
+-  for (var i = 1; i < points.length; i++) {
+-    var point = new GLatLng(points[i].coordinates[0], points[i].coordinates[1]);
+-    var labelOffset = new GSize(-6, -30);
+-    var markerLabel = "markerLabel";
+-    var markerOptions = {
+-        icon:pointIcon,
+-        title:points[i].id,
+-        labelText:points[i].id,
+-        labelClass:markerLabel,
+-        labelOffset:labelOffset };
+-    var marker = new LabeledMarker(point, markerOptions);
+-    this.putPointMarkerOnMap(marker, points[i]);
+-  }
+-
+-  if (initial) {
+-    this.categoriesControl = new CategoriesControl(Event.CURRENT.categoryGroups);
+-    this.addControl(this.categoriesControl);
+-  }
+-  
+-  this.highlightMapRegion(points);
+-}
+-
+-/**
+- * Shows information about checkpoints in a floating bubble above the point's marker.
+- * @param point Point in terms of checkpoints - read from JSON.
+- */
+-BGMap.prototype.showInfo = function(point) {
+-  var marker = this.pointsToMarkers.get(point);
+-  CheckpointsList.instance.highlightSelectedCheckpoint(point.id);
+-  marker.openInfoWindowHtml(BGMap.getInfoHtmlWindow(point)); 
+-  this.setCenter(marker.getPoint());
+-}
+-
+-/**
+- * Shows the route of a team by drawing an arrowed polyline on the map.
+- * @param checkpoints Array of numbers - checkpoint ids - in the order of taking checkpoints.
+- *                    Start point is not included in this array.
+- */
+-BGMap.prototype.showRoute = function(checkpoint_numbers) {
+-  if (this.polyline) {
+-    this.removeOverlay(this.polyline);
+-  }
+-  
+-  var coords = [this.startPoint];
+-  var checkpoints = [Event.CURRENT.findPointById(0)];
+-  for (var i = 0; i < checkpoint_numbers.length; i++) {
+-    var point = Event.CURRENT.findPointById(checkpoint_numbers[i]);
+-    if (!point) {
+-      alert("No checkpoint with id=" + checkpoint_numbers[i]);
+-      return;
+-    }
+-    coords.push(new GLatLng(point.coordinates[0], point.coordinates[1]));
+-    checkpoints.push(point);
+-  }
+-  coords.push(this.startPoint); // returning to start point to close the cycle
+-  
+-  this.polyline = new BDCCArrowedPolyline(coords, "blue", 4, 0.5, null, 30, 7, "blue", 3, 0.5);
+-  this.addOverlay(this.polyline);
+-  this.highlightMapRegion(checkpoints);
+-  scrollTo('map');
+-}
+-
+-
+-/**
+-* Clears the map: removes polyline (route) and all markers. 
+-*/
+-BGMap.prototype.clear = function() {
+-  if (this.polyline) {
+-    this.removeOverlay(this.polyline);
+-  }
+-  var markers = this.pointsToMarkers.values();
+-  for (var i = 0; i < markers.length; i++) {
+-    this.removeOverlay(markers[i]);
+-  }
+-  this.pointsToMarkers = new Hashtable();
+-  
+-  purge(document.getElementById('all'));
+-}
+-
+-
+-/******************************** PRIVATE METHODS ********************************/
+-
+-/**
+- * Puts marker on the map, adds click-event to it, adds marker and point to the pointsToMarkers hash.
+- * @param marker {GMarker} Marker to put on the map.
+- * @param point {Checkpoint} Point which marker is associated with. 
+- */
+-BGMap.prototype.putPointMarkerOnMap = function(marker, point) {
+-  this.addOverlay(marker);
+-  var bgmap = this;
+-  GEvent.addListener(marker, 'click', function() {
+-    bgmap.showInfo(point);
+-  });
+-  this.pointsToMarkers.put(point, marker);
+-}
+-
+-/**
+- * Get HTML for bubble window which is shown on the map when a checkpoint is selected.
+- * Window shows basic information about the checkpoint.
+- * @param point {Checkpoint} Checkpoint which is selected.
+- */
+-BGMap.getInfoHtmlWindow = function(point) {
+-  return new$('div').addClass('info')
+-    .append(new$('div').addClass('info_id').text(point.id))
+-    .append(new$('div').addClass('info_name').text(point.name))
+-    .append(new$('div').addClass('info_task').text(point.task))
+-    .context;
+-}
+-
+-/**
+- * Centralizes and zooms the map, so that all points are visible and centralized.
+- * @param sw GLatLng South-West corner of the rectangle.
+- * @param ne GLatLng North-East corner of the rectangle. 
+- */
+-BGMap.prototype.highlightMapRegion = function(checkpoints) {
+-  var rectangle = this.findRoundingRectangle(checkpoints);
+-  var sw = rectangle[0];
+-  var ne = rectangle[1];
+-  var visibleBounds = new GLatLngBounds(sw, ne);
+-  var preferredZoom = this.getBoundsZoomLevel(visibleBounds, this.getSize());
+-  var preferredCenter = new GLatLng(
+-      sw.lat() + (ne.lat() - sw.lat())/2,
+-      sw.lng() + (ne.lng() - sw.lng())/2);
+-  this.setCenter(preferredCenter, preferredZoom); 
+-}
+-
+-/**
+- * Finds the smallest rectangle containing all given checkpoints.
+- * @param checkpoints Array of checkpoints. Each checkpoint is an object, which
+- * has 'coordinates' attribute containing two floats - for x and y coordinates.
+- * @param return Array of two GLatLng objects for south-west and north-east corners
+- * of the rectangle.
+- */
+-BGMap.prototype.findRoundingRectangle = function(checkpoints) {
+-  var maxLat = checkpoints[0].coordinates[0];
+-  var maxLng = checkpoints[0].coordinates[1];
+-  var minLat = checkpoints[0].coordinates[0];
+-  var minLng = checkpoints[0].coordinates[1];
+-  for (var i = 1; i < checkpoints.length; i++) {
+-    maxLat = Math.max(maxLat, checkpoints[i].coordinates[0]);
+-    maxLng = Math.max(maxLng, checkpoints[i].coordinates[1]);
+-    minLat = Math.min(minLat, checkpoints[i].coordinates[0]);
+-    minLng = Math.min(minLng, checkpoints[i].coordinates[1]);
+-  }
+-  return [new GLatLng(minLat, minLng), new GLatLng(maxLat, maxLng)];
+-}
+\ No newline at end of file
++function BGMap() {
++  BGMap.extend(GMap2);
++  BGMap.base.call(this, get$("map"));
++  
++  this.pointsToMarkers = new Hashtable();
++  this.startPoint = null;
++  this.polyline = null;
++  this.categoriesControl = null;
++  
++  this.setUIToDefault();
++  this.setMapType(G_NORMAL_MAP);
++}
++
++BGMap.prototype.putPoints = function(points, initial) {
++  //start point
++  this.startPoint = new GLatLng(points[0].coordinates[0], points[0].coordinates[1]);
++  var startIcon = new GIcon(G_DEFAULT_ICON, "img/start.png");
++  var marker = new GMarker(this.startPoint, startIcon);
++  this.putPointMarkerOnMap(marker, points[0]);
++  
++  //other points
++  var pointIcon = new GIcon(G_DEFAULT_ICON, "img/cleanmarker.png");
++  for (var i = 1; i < points.length; i++) {
++    var point = new GLatLng(points[i].coordinates[0], points[i].coordinates[1]);
++    var labelOffset = new GSize(-6, -30);
++    var markerLabel = "markerLabel";
++    var markerOptions = {
++        icon:pointIcon,
++        title:points[i].id,
++        labelText:points[i].id,
++        labelClass:markerLabel,
++        labelOffset:labelOffset };
++    var marker2 = new LabeledMarker(point, markerOptions);
++    this.putPointMarkerOnMap(marker2, points[i]);
++  }
++
++  if (initial) {
++    this.categoriesControl = new CategoriesControl(Event.CURRENT.categoryGroups);
++    this.addControl(this.categoriesControl);
++  }
++  
++  this.highlightMapRegion(points);
++};
++
++/**
++ * Shows information about checkpoints in a floating bubble above the point's marker.
++ * @param point Point in terms of checkpoints - read from JSON.
++ */
++BGMap.prototype.showInfo = function(point) {
++  var marker = this.pointsToMarkers.get(point);
++  CheckpointsList.instance.highlightSelectedCheckpoint(point.id);
++  marker.openInfoWindowHtml(BGMap.getInfoHtmlWindow(point)); 
++  this.setCenter(marker.getPoint());
++};
++
++/**
++ * Shows the route of a team by drawing an arrowed polyline on the map.
++ * @param checkpoint_numbers Array of numbers - checkpoint ids - in the order of taking checkpoints.
++ *                    Start point is not included in this array.
++ */
++BGMap.prototype.showRoute = function(checkpoint_numbers) {
++  if (this.polyline) {
++    this.removeOverlay(this.polyline);
++  }
++  
++  var coords = [this.startPoint];
++  var checkpoints = [Event.CURRENT.findPointById(0)];
++  for (var i = 0; i < checkpoint_numbers.length; i++) {
++    var point = Event.CURRENT.findPointById(checkpoint_numbers[i]);
++    if (!point) {
++      alert("No checkpoint with id=" + checkpoint_numbers[i]);
++      return;
++    }
++    coords.push(new GLatLng(point.coordinates[0], point.coordinates[1]));
++    checkpoints.push(point);
++  }
++  coords.push(this.startPoint); // returning to start point to close the cycle
++  
++  this.polyline = new BDCCArrowedPolyline(coords, "blue", 4, 0.5, null, 30, 7, "blue", 3, 0.5);
++  this.addOverlay(this.polyline);
++  this.highlightMapRegion(checkpoints);
++  scrollTo('map');
++};
++
++
++/**
++* Clears the map: removes polyline (route) and all markers. 
++*/
++BGMap.prototype.clear = function() {
++  if (this.polyline) {
++    this.removeOverlay(this.polyline);
++  }
++  var markers = this.pointsToMarkers.values();
++  for (var i = 0; i < markers.length; i++) {
++    this.removeOverlay(markers[i]);
++  }
++  this.pointsToMarkers = new Hashtable();
++  
++  purge(document.getElementById('all'));
++};
++
++
++/******************************** PRIVATE METHODS ********************************/
++
++/**
++ * Puts marker on the map, adds click-event to it, adds marker and point to the pointsToMarkers hash.
++ * @param marker {GMarker} Marker to put on the map.
++ * @param point {Checkpoint} Point which marker is associated with. 
++ */
++BGMap.prototype.putPointMarkerOnMap = function(marker, point) {
++  this.addOverlay(marker);
++  var bgmap = this;
++  GEvent.addListener(marker, 'click', function() {
++    bgmap.showInfo(point);
++  });
++  this.pointsToMarkers.put(point, marker);
++};
++
++/**
++ * Get HTML for bubble window which is shown on the map when a checkpoint is selected.
++ * Window shows basic information about the checkpoint.
++ * @param point {Checkpoint} Checkpoint which is selected.
++ */
++BGMap.getInfoHtmlWindow = function(point) {
++  return new$('div').addClass('info')
++    .append(new$('div').addClass('info_id').text(point.id))
++    .append(new$('div').addClass('info_name').text(point.name))
++    .append(new$('div').addClass('info_task').text(point.task))
++    .context;
++};
++
++/**
++ * Centralizes and zooms the map, so that all points are visible and centralized.
++ * @param checkpoints Checkpoints
++ */
++BGMap.prototype.highlightMapRegion = function(checkpoints) {
++  var rectangle = this.findRoundingRectangle(checkpoints);
++  var sw = rectangle[0];
++  var ne = rectangle[1];
++  var visibleBounds = new GLatLngBounds(sw, ne);
++  var preferredZoom = this.getBoundsZoomLevel(visibleBounds, this.getSize());
++  var preferredCenter = new GLatLng(
++      sw.lat() + (ne.lat() - sw.lat())/2,
++      sw.lng() + (ne.lng() - sw.lng())/2);
++  this.setCenter(preferredCenter, preferredZoom); 
++};
++
++/**
++ * Finds the smallest rectangle containing all given checkpoints.
++ * @param checkpoints Array of checkpoints. Each checkpoint is an object, which
++ * has 'coordinates' attribute containing two floats - for x and y coordinates.
++ * @return Array of two GLatLng objects for south-west and north-east corners
++ * of the rectangle.
++ */
++BGMap.prototype.findRoundingRectangle = function(checkpoints) {
++  var maxLat = checkpoints[0].coordinates[0];
++  var maxLng = checkpoints[0].coordinates[1];
++  var minLat = checkpoints[0].coordinates[0];
++  var minLng = checkpoints[0].coordinates[1];
++  for (var i = 1; i < checkpoints.length; i++) {
++    maxLat = Math.max(maxLat, checkpoints[i].coordinates[0]);
++    maxLng = Math.max(maxLng, checkpoints[i].coordinates[1]);
++    minLat = Math.min(minLat, checkpoints[i].coordinates[0]);
++    minLng = Math.min(minLng, checkpoints[i].coordinates[1]);
++  }
++  return [new GLatLng(minLat, minLng), new GLatLng(maxLat, maxLng)];
++};
+diff --git a/js/results_list.js b/js/results_list.js
+old mode 100644
+new mode 100755
+index 4efcfc2..952cf57
+--- a/js/results_list.js
++++ b/js/results_list.js
+@@ -1,95 +1,96 @@
+-function ResultsList() {
+-}
+-ResultsList.instance = new ResultsList();
+-
+-/**
+- * Prints the results for the current event in <div id="results">.
+- * Results are grouped into categories. Click on category to display teams' results.
+- * Click on a team to display its route.
+- */
+-ResultsList.prototype.print = function() {
+-  var list = new$('ul');
+-  for (var i = 0; i < RESULTS.length; i++) {
+-    list.append(this.printCategoryResults(i));
+-  }
+-  list.appendTo('#results');
+-}
+-
+-/******************************** PRIVATE METHODS ********************************/
+-
+-ResultsList.prototype.printCategoryResults = function(i) {
+-  var res = RESULTS[i];
+-
+-  var li = new$('li')
+-    .append(new$('span').addClass('link').addClass('cat_name')
+-      .click(function() { $('#cat_' + i).slideToggle(); })
+-      .text(res.category.name));
+-  
+-  var table = new$('table').addClass('results')
+-    .append(new$('th').text('#'))
+-    .append(new$('th').text('Команда'))
+-    .append(new$('th').text('Очки'))
+-    .append(new$('th').text('Время'));
+-  
+-  for (var j = 0; j < res.teams.length; j++) {
+-    table.append(this.printTeamResult(j, res));
+-  }
+-  
+-  new$('div').attr('id', 'cat_' + i).addClass('cat_results')
+-    .append(table)
+-    .appendTo(li);
+-  return li;
+-}
+-
+-ResultsList.prototype.printTeamResult = function(j, res) {
+-  var t = res.teams[j];
+-  
+-  var warn = '';
+-  if (this.resultHasUndefinedCheckpoint(t.checkpoints)) { 
+-    warn = '<strong class="no_points">!</strong> '; 
+-  }
+-  
+-  var placeNum = j+1;
+-  var outer = this;
+-  return new$('tr')
+-    .append(new$('td').addClass('place').html(placeNum))
+-    .append(new$('td').addClass('link')
+-      .click(function() { 
+-        if (Event.CURRENT.findGroupForCategoryKey(res.category.key).key != 
+-            MAP.categoriesControl.currentCategory) {
+-          MAP.categoriesControl.selectCategory('all');
+-        }
+-        MAP.showRoute(t.checkpoints);
+-        outer.highlightSelected($(this));
+-      })
+-      .html(warn + t.title))
+-    .append(new$('td').text(t.count))
+-    .append(new$('td').text(t.time));
+-}
+-
+-ResultsList.prototype.resultHasUndefinedCheckpoint = function(checkpoints) {
+-  for (var i = 0; i < checkpoints.length; i++) {
+-    if (!Event.CURRENT.findPointById(checkpoints[i])) {
+-      return true;
+-    }
+-  }
+-  return false;
+-}
+-
+-/**
+- * Highlights the selected team result in the list.
+- * Removes hightlighting from the currently selected if there is one.
+- * @param obj {JQuery} JQuery wrapper for DOM element which should be selected
+- *                     (row in the results table).
+- */
+-ResultsList.prototype.highlightSelected = function(obj) {
+-  this.resetHighlighting();
+-  obj.addClass('selectedResult');
+-}
+-
+-/**
+- * Removes highlighting from all result rows.
+- */
+-ResultsList.prototype.resetHighlighting = function() {
+-  $('#results td.selectedResult').removeClass('selectedResult');
+-}
++function ResultsList() {
++}
++ResultsList.instance = new ResultsList();
++
++/**
++ * Prints the results for the current event in <div id="results">.
++ * Results are grouped into categories. Click on category to display teams' results.
++ * Click on a team to display its route.
++ */
++ResultsList.prototype.print = function() {
++  var list = new$('ul');
++  for (var i = 0; i < RESULTS.length; i++) {
++    list.append(this.printCategoryResults(i));
++  }
++  list.appendTo('#results');
++};
++
++/******************************** PRIVATE METHODS ********************************/
++
++ResultsList.prototype.printCategoryResults = function(i) {
++  var res = RESULTS[i];
++
++  var li = new$('li')
++    .append(new$('span').addClass('link').addClass('cat_name')
++      .click(function() { $('#cat_' + i).slideToggle(); })
++      .text(res.category.name));
++  
++  var table = new$('table').addClass('results')
++    .append(new$('th').text('#'))
++    .append(new$('th').text('Команда'))
++    .append(new$('th').text('Очки'))
++    .append(new$('th').text('Время'));
++  
++  for (var j = 0; j < res.teams.length; j++) {
++    table.append(this.printTeamResult(j, res));
++  }
++  
++  new$('div').attr('id', 'cat_' + i).addClass('cat_results')
++    .append(table)
++    .appendTo(li);
++  return li;
++};
++
++ResultsList.prototype.printTeamResult = function(j, res) {
++  var t = res.teams[j];
++  
++  var warn = '';
++  if (this.resultHasUndefinedCheckpoint(t.checkpoints)) { 
++    warn = '<strong class="no_points">!</strong> '; 
++  }
++  
++  var placeNum = j+1;
++  var outer = this;
++  return new$('tr')
++    .append(new$('td').addClass('place').html(placeNum))
++    .append(new$('td').addClass('link')
++      .click(function() { 
++        if (Event.CURRENT.findGroupForCategoryKey(res.category.key).key != 
++            MAP.categoriesControl.currentCategory) {
++          MAP.categoriesControl.selectCategory('all');
++        }
++        MAP.showRoute(t.checkpoints);
++        outer.highlightSelected($(this));
++      })
++      .html(warn + t.title))
++    .append(new$('td').text(t.count))
++    .append(new$('td').text(t.time));
++};
++
++ResultsList.prototype.resultHasUndefinedCheckpoint = function(checkpoints) {
++  for (var i = 0; i < checkpoints.length; i++) {
++    if (!Event.CURRENT.findPointById(checkpoints[i])) {
++      return true;
++    }
++  }
++  return false;
++};
++
++/**
++ * Highlights the selected team result in the list.
++ * Removes hightlighting from the currently selected if there is one.
++ * @param obj {JQuery} JQuery wrapper for DOM element which should be selected
++ *                     (row in the results table).
++ */
++ResultsList.prototype.highlightSelected = function(obj) {
++  this.resetHighlighting();
++  obj.addClass('selectedResult');
++};
++
++/**
++ * Removes highlighting from all result rows.
++ */
++ResultsList.prototype.resetHighlighting = function() {
++  $('#results td.selectedResult').removeClass('selectedResult');
++};
++
+diff --git a/js/util.js b/js/util.js
+old mode 100644
+new mode 100755
+index ca34400..c3250a3
+--- a/js/util.js
++++ b/js/util.js
+@@ -1,91 +1,91 @@
+-/**
+- * Removes all duplicates from the given array. 
+- * Array can be not sorted - it is sorted in this method anyway
+- */
+-Array.prototype.removeDuplicates = function() {
+-  this.sort();
+-  for (var i = 1; i < this.length; i++) {
+-    if (this[i-1] == this[i]) { this.splice(i, 1); }
+-  }
+-  return this;
+-}
+-
+-/**
+- * Helpful function for implementing inheritance in Javascript.
+- * If you want class A to extend class B, use the following:
+- * function A() {
+- *   A.extend(B);
+- *   A.base.call(this, <other parameters of parent constructor>);
+- * }
+- * Note 'extend' (without 's' at the end): 'extends' is a probable future reserved word.
+- */
+-Function.prototype.extend = function(base){
+-  for (var prop in base.prototype) {
+-    this.prototype[prop] = base.prototype[prop];
+-  }
+-  this.base = base;
+-}
+-
+-/**
+-* Synonym for $(document.createElement).
+-* It is faster than $('<tag/>')
+-* It is shorter than $(document.createElement('tag'))
+-*/
+-function new$(name) {
+-  return $(document.createElement(name));
+-}
+-
+-/**
+- * Synonym for document.getElementById.
+- * If you need just to get element by id, use get$('id') instead of $('#id'),
+- * because JQuery's $() is slower as it uses complicated selector logic.
+- */
+-function get$(id) {
+-  return document.getElementById(id);
+-}
+-
+-/**
+- * Scrolls to element with the given id.
+- */
+-function scrollTo(id) {
+-  window.scroll(0, getPositionY(get$(id)));
+-}
+-
+-/**
+- * Returns the absolute vertical position of the given object.
+- */
+-function getPositionY(obj) {
+-  var curtop = 0;
+-  if (obj.offsetParent) {
+-    while(true) {
+-      curtop += obj.offsetTop;
+-      if (!obj.offsetParent) {
+-        break;
+-      }
+-      obj = obj.offsetParent;
+-    }
+-  } else if (obj.y) {
+-    curtop += obj.y;
+-  }
+-  return curtop;
+-}
+-
+-function purge(d) {
+-    var a = d.attributes, i, l, n;
+-    if (a) {
+-        l = a.length;
+-        for (i = 0; i < l; i += 1) {
+-            n = a[i].name;
+-            if (typeof d[n] === 'function') {
+-                d[n] = null;
+-            }
+-        }
+-    }
+-    a = d.childNodes;
+-    if (a) {
+-        l = a.length;
+-        for (i = 0; i < l; i += 1) {
+-            purge(d.childNodes[i]);
+-        }
+-    }
+-}
++/**
++ * Removes all duplicates from the given array. 
++ * Array can be not sorted - it is sorted in this method anyway
++ */
++Array.prototype.removeDuplicates = function() {
++  this.sort();
++  for (var i = 1; i < this.length; i++) {
++    if (this[i-1] == this[i]) { this.splice(i, 1); }
++  }
++  return this;
++};
++
++/**
++ * Helpful function for implementing inheritance in Javascript.
++ * If you want class A to extend class B, use the following:
++ * function A() {
++ *   A.extend(B);
++ *   A.base.call(this, <other parameters of parent constructor>);
++ * }
++ * Note 'extend' (without 's' at the end): 'extends' is a probable future reserved word.
++ */
++Function.prototype.extend = function(base){
++  for (var prop in base.prototype) {
++    this.prototype[prop] = base.prototype[prop];
++  }
++  this.base = base;
++};
++
++/**
++* Synonym for $(document.createElement).
++* It is faster than $('<tag/>')
++* It is shorter than $(document.createElement('tag'))
++*/
++function new$(name) {
++  return $(document.createElement(name));
++}
++
++/**
++ * Synonym for document.getElementById.
++ * If you need just to get element by id, use get$('id') instead of $('#id'),
++ * because JQuery's $() is slower as it uses complicated selector logic.
++ */
++function get$(id) {
++  return document.getElementById(id);
++}
++
++/**
++ * Scrolls to element with the given id.
++ */
++function scrollTo(id) {
++  window.scroll(0, getPositionY(get$(id)));
++}
++
++/**
++ * Returns the absolute vertical position of the given object.
++ */
++function getPositionY(obj) {
++  var curtop = 0;
++  if (obj.offsetParent) {
++    while(true) {
++      curtop += obj.offsetTop;
++      if (!obj.offsetParent) {
++        break;
++      }
++      obj = obj.offsetParent;
++    }
++  } else if (obj.y) {
++    curtop += obj.y;
++  }
++  return curtop;
++}
++
++function purge(d) {
++    var a = d.attributes, i, l, n;
++    if (a) {
++        l = a.length;
++        for (i = 0; i < l; i += 1) {
++            n = a[i].name;
++            if (typeof d[n] === 'function') {
++                d[n] = null;
++            }
++        }
++    }
++    a = d.childNodes;
++    if (a) {
++        l = a.length;
++        for (i = 0; i < l; i += 1) {
++            purge(d.childNodes[i]);
++        }
++    }
++}
