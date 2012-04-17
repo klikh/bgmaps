@@ -51,6 +51,7 @@
                        match=".*link href=.(.*). rel=.stylesheet. type=.text/css.*"
                        replace="${bgmaps.root.dir}/\1 "
                        byline="true"/>
+                       
         <replaceregexp file="${output.dir}/_tmp_event.js" encoding="UTF-8"
                        match=".*!-- JAVASCRIPT_BEGIN --.(.*).!-- JAVASCRIPT_END --.*"
                        flags="s"
@@ -71,13 +72,24 @@
             </filterchain>
         </loadfile>
 
-        <echo message="Merging: ${css.files}"/>
-        <concat dest="${output.dir}/_tmp_event.css" append="false" fixlastline="true" encoding="UTF-8" outputencoding="UTF-8">
+		<!-- Workaround: filterchain to delete UTF-8 BOM (old ant on windows) -->
+        <concat dest="${output.dir}/_tmp_event.css" append="false"
+                fixlastline="true"
+                encoding="UTF-8"
+                outputencoding="UTF-8">
             <filelist files="${css.files}"/>
+            <filterchain>
+                <deletecharacters chars="&#xFEFF;" />
+            </filterchain>
         </concat>
-        <echo message="Merging: ${js.files}"/>
-        <concat dest="${output.dir}/_tmp_event.js" append="false" binary="true" >
+        <concat dest="${output.dir}/_tmp_event.js" append="false"
+                fixlastline="true"
+                encoding="UTF-8"
+                outputencoding="UTF-8">
             <filelist files="${js.files}"/>
+            <filterchain>
+                <deletecharacters chars="&#xFEFF;" />
+            </filterchain>
         </concat>
 
         <!-- Running yui-compressor with file list -->
