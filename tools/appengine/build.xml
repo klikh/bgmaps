@@ -116,7 +116,7 @@
         <replaceregexp file="${output.war.dir}/event.html" encoding="UTF-8"
                        match=".!-- JAVASCRIPT_BEGIN --.(.*).!-- JAVASCRIPT_END --."
                        flags="s"
-                       replace="  &lt;script src='${compressed.js.name}' type='text/javascript'>\&lt;/script>"
+                       replace="  &lt;script src='${compressed.js.name}' type='text/javascript' charset='UTF-8'>\&lt;/script>"
                        byline="false"/>
 
         <delete file="${output.dir}/_tmp_event.css"/>
