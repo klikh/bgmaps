@@ -161,4 +161,18 @@
     <target name="clean">
         <delete dir="${output.dir}"/>
     </target>
+
+    <target name="help">
+        <echo>
+        * prepare-deploy -- prepare deploy into ${output.dir}
+          (you even don't need appengine sdk)
+
+        * deploy -- prepare deploy and do update with version
+        specified in war/WEB-INF/appengine-web.xml
+
+        * runserver -- run test server locally
+
+        * clean -- clean up ${output.dir} directory
+        </echo>
+    </target>
 </project>
