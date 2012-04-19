@@ -2,10 +2,17 @@
     <property file="user.properties" />
     <property file="build.properties" />
 
-    <target name="deploy" depends="all, prepare-deploy, do-deploy" />
+    <import file="${appengine.sdk}/config/user/ant-macros.xml" optional="true"/>
+    
+    <target name="deploy" depends="do-deploy" />
     <target name="all" depends="prepare, compile"/>
 
     <target name="prepare">
+        <mkdir dir="${output.dir}"/>
+        <mkdir dir="${output.war.dir}"/>
+        <mkdir dir="${output.war.dir}/WEB-INF/lib"/>
+        <mkdir dir="${output.war.dir}/WEB-INF/classes"/>
+
         <!-- TODO Check if Ant version is supported -->
         <!-- TODO Check if AppEngine SDK specified correctly -->
     </target>
@@ -15,8 +22,6 @@
     </target>
 
     <target name="prepare-deploy">
-        <mkdir dir="${output.dir}"/>
-
         <copy todir="${output.dir}">
             <fileset dir="${root.dir}" includes="war/**"/>
         </copy>
@@ -40,17 +45,7 @@
             and all js files listed between JAVASCRIPT_BEGIN and JAVASCRIPT_END
             will be compressed with yui-compressor into one file.
           -->
-        <copy file="${bgmaps.root.dir}/event.html" tofile="${output.dir}/_tmp_event.css"/>
         <copy file="${bgmaps.root.dir}/event.html" tofile="${output.dir}/_tmp_event.js"/>
-        <replaceregexp file="${output.dir}/_tmp_event.css" encoding="UTF-8"
-                       match=".*!-- CSS_BEGIN --.(.*).!-- CSS_END --.*"
-                       flags="s"
-                       replace="\1"
-                       byline="false"/>
-        <replaceregexp file="${output.dir}/_tmp_event.css" encoding="UTF-8"
-                       match=".*link href=.(.*). rel=.stylesheet. type=.text/css.*"
-                       replace="${bgmaps.root.dir}/\1 "
-                       byline="true"/>
         <replaceregexp file="${output.dir}/_tmp_event.js" encoding="UTF-8"
                        match=".*!-- JAVASCRIPT_BEGIN --.(.*).!-- JAVASCRIPT_END --.*"
                        flags="s"
@@ -60,33 +55,54 @@
                        match=".*script src=.(js.*). type=.text/javascript.*"
                        replace="${bgmaps.root.dir}/\1 "
                        byline="true"/>
-        <loadfile property="css.files" srcFile="${output.dir}/_tmp_event.css">
-            <filterchain>
-                <striplinebreaks/>
-            </filterchain>
-        </loadfile>
         <loadfile property="js.files" srcFile="${output.dir}/_tmp_event.js">
             <filterchain>
                 <striplinebreaks/>
             </filterchain>
         </loadfile>
 
-        <echo message="Merging: ${css.files}"/>
-        <concat dest="${output.dir}/_tmp_event.css" append="false" fixlastline="true" encoding="UTF-8" outputencoding="UTF-8">
-            <filelist files="${css.files}"/>
+        <!-- Workaround: filterchain to delete UTF-8 BOM (old ant on windows) -->
+        <concat dest="${output.dir}/_tmp_event.css" append="false"
+                fixlastline="false"
+                encoding="UTF-8"
+                outputencoding="UTF-8">
+            <fileset dir="${bgmaps.root.dir}/css" includes="*.css"/>
+            <filterchain>
+                <deletecharacters chars="&#xFEFF;" />
+            </filterchain>
         </concat>
-        <echo message="Merging: ${js.files}"/>
-        <concat dest="${output.dir}/_tmp_event.js" append="false" binary="true" >
+        <concat dest="${output.dir}/_tmp_event.js" append="false"
+                fixlastline="false"
+                encoding="UTF-8"
+                outputencoding="UTF-8">
             <filelist files="${js.files}"/>
+            <filterchain>
+                <deletecharacters chars="&#xFEFF;" />
+            </filterchain>
         </concat>
 
         <!-- Running yui-compressor with file list -->
-        <java jar="${bgmaps.root.dir}/tools/yuicompressor-2.4.2.jar"
-              args="--type css -o ${output.css} ${output.dir}/_tmp_event.css"
-              fork="true" failonerror="true"/>
-        <java jar="${bgmaps.root.dir}/tools/yuicompressor-2.4.2.jar"
-              args="--type js -o ${output.js} ${output.dir}/_tmp_event.js"
-              fork="true" failonerror="true"/>
+        <java jar="${compressor.jar}"
+              fork="true" failonerror="true">
+            <arg value="--charset"/>
+            <arg value="utf-8"/>
+            <arg value="--type"/>
+            <arg value="css"/>
+            <arg value="-o"/>
+            <arg value="${output.css}"/>
+            <arg value="${output.dir}/_tmp_event.css"/>
+        </java>
+
+        <java jar="${compressor.jar}"
+              fork="true" failonerror="true">
+            <arg value="--charset"/>
+            <arg value="utf-8"/>
+            <arg value="--type"/>
+            <arg value="js"/>
+            <arg value="-o"/>
+            <arg value="${output.js}"/>
+            <arg value="${output.dir}/_tmp_event.js"/>
+        </java>
 
         <!-- Replacing final file -->
         <replaceregexp file="${output.war.dir}/index.html" encoding="UTF-8"
@@ -104,14 +120,42 @@
         <replaceregexp file="${output.war.dir}/event.html" encoding="UTF-8"
                        match=".!-- JAVASCRIPT_BEGIN --.(.*).!-- JAVASCRIPT_END --."
                        flags="s"
-                       replace="  &lt;script src='${compressed.js.name}' type='text/javascript'>\&lt;/script>"
+                       replace="  &lt;script src='${compressed.js.name}' type='text/javascript' charset='UTF-8'>\&lt;/script>"
                        byline="false"/>
 
+        <!-- clean up -->
         <delete file="${output.dir}/_tmp_event.css"/>
         <delete file="${output.dir}/_tmp_event.js"/>
     </target>
 
-    <target name="do-deploy">
+    <target name="prepare-appengine-env">
+        <echo message="Checking for ${appengine.sdk}/config/user/ant-macros.xml"/>
+        <condition property="appengine-sdk-present">
+            <and>
+                <isset property="appengine.sdk"/>
+                <available file="${appengine.sdk}/config/user/ant-macros.xml" type="file"/>
+            </and>
+        </condition>
+        <fail message="appengine.sdk property is not set or incorrect (failed to locate SDK/config/user/ant-macros.xml)!"
+              unless="appengine-sdk-present"/>
+
+        <!-- Copy jars (not important cause we don't have server side app)
+        <copy todir="${output.war.dir}/WEB-INF/lib"
+              flatten="true">
+            <fileset dir="${appengine.sdk}/lib/user">
+                <include name="**/*.jar" />
+            </fileset>
+        </copy> -->
+    </target>
+
+    <target name="do-deploy" depends="all, prepare-deploy, prepare-appengine-env">
+        <echo message="deploying ${output.war.dir}"/>
+        <appcfg action="update" war="${output.war.dir}" />
+    </target>
+
+    <target name="runserver" depends="prepare-deploy, prepare-appengine-env"
+            description="Starts the development server.">
+        <dev_appserver war="war" />
     </target>
 
     <target name="clean">
