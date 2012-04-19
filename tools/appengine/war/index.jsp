@@ -1,4 +1,5 @@
 <%--
   (C) 2012 Andrew Porokhin
+  (C) 2012 BGMaps
 --%>
-<% response.sendRedirect("/bgmaps/index.html"); %>
+<% response.sendRedirect("/index.html"); %>
