@@ -48,3 +48,4 @@ function toggleShowEventsButton(show) {
   if (!show) { show = $('#events').is(':visible'); }
   $('#show_events').text(show ? 'Скрыть' : 'Показать');
 }
+

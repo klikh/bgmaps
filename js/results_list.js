@@ -93,4 +93,3 @@ ResultsList.prototype.highlightSelected = function(obj) {
 ResultsList.prototype.resetHighlighting = function() {
   $('#results td.selectedResult').removeClass('selectedResult');
 };
-
