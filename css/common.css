@@ -23,8 +23,7 @@ li {
 }
 
 .link {
-  cursor:pointer;
-  cursor:hand;
+  cursor: pointer;
   color: blue;
   text-decoration: underline;
 }
