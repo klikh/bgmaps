@@ -7,6 +7,32 @@ function initialize() {
           xhr.overrideMimeType("text/javascript");
       }
   });
+
+  $(window).bind('hashchange', function() {
+    loadLocation();
+  });
+
+  loadLocation();
+}
+
+function loadLocation() {
+  var location = parseLocation(document.location);
+  var event = loadEvent(location.event, function() {
+    if (location.category && event.containsCategory(location.category)) {
+      openCategory(location.category);
+    }
+    if (location.route) {
+      showRoute(location.category, location.route);
+    }
+  });
+}
+
+function openCategory(category) {
+  $('#' + ResultsList.getCategoryDivId(category)).show();
+}
+
+function showRoute(category, routeId) {
+  ResultsList.instance.showRoute(category, routeId);
 }
 
 function initShowCheckpointsButton() {

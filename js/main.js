@@ -1,7 +1,6 @@
-function loadEvent(event) {
+function loadEvent(event, callback) {
   if (!Event.get(event)) {
     event = Event.DEFAULT.key;
-    document.location.hash = '#' + event;
   }
 
   Event.setCurrent(Event.get(event));
@@ -10,9 +9,9 @@ function loadEvent(event) {
     toggleShowEventsButton(false);
     clearAll();
     loadCheckpoints(event);
-    loadResults(event);
-    $('#results').slideDown();
+    loadResults(event, callback);
   });
+  return Event.CURRENT;
 }
 
 function clearAll() {
@@ -37,10 +36,11 @@ function loadCheckpoints(event) {
   });
 }
 
-function loadResults(event) {
+function loadResults(event, callback) {
   $.getJSON('results/' + event + '.js', function(data) {
     RESULTS = eval(data);
     ResultsList.instance.print();
+    callback.call();
   });
 }
 

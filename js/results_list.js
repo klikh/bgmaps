@@ -20,7 +20,7 @@ ResultsList.prototype.print = function() {
 ResultsList.prototype.printCategoryResults = function(categoryResult) {
   var li = new$('li')
     .append(new$('span').addClass('link').addClass('cat_name')
-      .click(function() { $('#' + ResultsList.getCategoryDivId(categoryResult.category)).slideToggle(); })
+      .click(function() { $('#' + ResultsList.getCategoryDivId(categoryResult.category.key)).slideToggle(); })
       .text(categoryResult.category.name));
   
   var table = new$('table').addClass('results')
@@ -33,14 +33,36 @@ ResultsList.prototype.printCategoryResults = function(categoryResult) {
     table.append(this.printTeamResult(categoryResult.category, categoryResult.teams[j], j+1));
   }
   
-  new$('div').attr('id', ResultsList.getCategoryDivId(categoryResult.category)).addClass('cat_results')
+  new$('div').attr('id', ResultsList.getCategoryDivId(categoryResult.category.key)).addClass('cat_results')
     .append(table)
     .appendTo(li);
   return li;
 };
 
-ResultsList.getCategoryDivId = function (category) {
-  return 'cat_' + category.key;
+ResultsList.getCategoryDivId = function (categoryKey) {
+  return 'cat_' + categoryKey;
+};
+
+ResultsList.getTeamResultDivId = function (categoryKey, place) {
+  return categoryKey + "/" + place;
+};
+
+ResultsList.prototype.showRoute = function(categoryKey, routePlace) {
+  if (Event.CURRENT.findGroupForCategoryKey(categoryKey).key != MAP.categoriesControl.currentCategory) {
+    MAP.categoriesControl.selectCategory('all');
+  }
+  var teamResult = this.findTeamResultByPlace(categoryKey, routePlace);
+  MAP.showRoute(teamResult.checkpoints);
+  this.highlightSelected($(get$(ResultsList.getTeamResultDivId(categoryKey, routePlace))));
+  updateLocation(Event.CURRENT.key, categoryKey, routePlace);
+};
+
+ResultsList.prototype.findTeamResultByPlace = function(categoryKey, place) {
+  for (var i = 0; i < RESULTS.length; i++) {
+    if (RESULTS[i].category.key == categoryKey) {
+      return RESULTS[i].teams[place - 1];
+    }
+  }
 };
 
 ResultsList.prototype.printTeamResult = function(category, teamResult, place) {
@@ -52,14 +74,9 @@ ResultsList.prototype.printTeamResult = function(category, teamResult, place) {
   var outer = this;
   return new$('tr')
     .append(new$('td').addClass('place').html(place))
-    .append(new$('td').addClass('link')
-      .click(function() { 
-        if (Event.CURRENT.findGroupForCategoryKey(category.key).key !=
-            MAP.categoriesControl.currentCategory) {
-          MAP.categoriesControl.selectCategory('all');
-        }
-        MAP.showRoute(teamResult.checkpoints);
-        outer.highlightSelected($(this));
+    .append(new$('td').addClass('link').attr('id', ResultsList.getTeamResultDivId(category.key, place))
+      .click(function() {
+        outer.showRoute(category.key, place);
       })
       .html(warn + teamResult.title))
     .append(new$('td').text(teamResult.count))

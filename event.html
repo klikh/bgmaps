@@ -32,6 +32,7 @@
   <script src="js/categories_control.js" type="text/javascript"></script>
   <script src="js/checkpoints_list.js" type="text/javascript"></script>
   <script src="js/results_list.js" type="text/javascript"></script>
+  <script src="js/location.js " type="text/javascript"></script>
 
   <script src="js/init.js" type="text/javascript"></script>
   <script src="js/main.js" type="text/javascript"></script>
@@ -42,7 +43,6 @@
     var MAP;
     window.onload = function() {
       initialize();
-      loadEvent(document.location.hash.substr(1));
     };
     window.onunload = function() {
       GUnload();
