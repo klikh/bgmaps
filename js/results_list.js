@@ -10,20 +10,18 @@ ResultsList.instance = new ResultsList();
 ResultsList.prototype.print = function() {
   var list = new$('ul');
   for (var i = 0; i < RESULTS.length; i++) {
-    list.append(this.printCategoryResults(i));
+    list.append(this.printCategoryResults(RESULTS[i]));
   }
   list.appendTo('#results');
 };
 
 /******************************** PRIVATE METHODS ********************************/
 
-ResultsList.prototype.printCategoryResults = function(i) {
-  var res = RESULTS[i];
-
+ResultsList.prototype.printCategoryResults = function(categoryResult) {
   var li = new$('li')
     .append(new$('span').addClass('link').addClass('cat_name')
-      .click(function() { $('#cat_' + i).slideToggle(); })
-      .text(res.category.name));
+      .click(function() { $('#cat_' + categoryResult.category.key).slideToggle(); })
+      .text(categoryResult.category.name));
   
   var table = new$('table').addClass('results')
     .append(new$('th').text('#'))
@@ -31,40 +29,37 @@ ResultsList.prototype.printCategoryResults = function(i) {
     .append(new$('th').text('Очки'))
     .append(new$('th').text('Время'));
   
-  for (var j = 0; j < res.teams.length; j++) {
-    table.append(this.printTeamResult(j, res));
+  for (var j = 0; j < categoryResult.teams.length; j++) {
+    table.append(this.printTeamResult(categoryResult.category, categoryResult.teams[j], j+1));
   }
   
-  new$('div').attr('id', 'cat_' + i).addClass('cat_results')
+  new$('div').attr('id', 'cat_' + categoryResult.category.key).addClass('cat_results')
     .append(table)
     .appendTo(li);
   return li;
 };
 
-ResultsList.prototype.printTeamResult = function(j, res) {
-  var t = res.teams[j];
-  
+ResultsList.prototype.printTeamResult = function(category, teamResult, place) {
   var warn = '';
-  if (this.resultHasUndefinedCheckpoint(t.checkpoints)) { 
+  if (this.resultHasUndefinedCheckpoint(teamResult.checkpoints)) {
     warn = '<strong class="no_points">!</strong> '; 
   }
   
-  var placeNum = j+1;
   var outer = this;
   return new$('tr')
-    .append(new$('td').addClass('place').html(placeNum))
+    .append(new$('td').addClass('place').html(place))
     .append(new$('td').addClass('link')
       .click(function() { 
-        if (Event.CURRENT.findGroupForCategoryKey(res.category.key).key != 
+        if (Event.CURRENT.findGroupForCategoryKey(category.key).key !=
             MAP.categoriesControl.currentCategory) {
           MAP.categoriesControl.selectCategory('all');
         }
-        MAP.showRoute(t.checkpoints);
+        MAP.showRoute(teamResult.checkpoints);
         outer.highlightSelected($(this));
       })
-      .html(warn + t.title))
-    .append(new$('td').text(t.count))
-    .append(new$('td').text(t.time));
+      .html(warn + teamResult.title))
+    .append(new$('td').text(teamResult.count))
+    .append(new$('td').text(teamResult.time));
 };
 
 ResultsList.prototype.resultHasUndefinedCheckpoint = function(checkpoints) {
@@ -78,7 +73,7 @@ ResultsList.prototype.resultHasUndefinedCheckpoint = function(checkpoints) {
 
 /**
  * Highlights the selected team result in the list.
- * Removes hightlighting from the currently selected if there is one.
+ * Removes highlighting from the currently selected if there is one.
  * @param obj {JQuery} JQuery wrapper for DOM element which should be selected
  *                     (row in the results table).
  */
