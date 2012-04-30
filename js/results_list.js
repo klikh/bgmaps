@@ -20,7 +20,7 @@ ResultsList.prototype.print = function() {
 ResultsList.prototype.printCategoryResults = function(categoryResult) {
   var li = new$('li')
     .append(new$('span').addClass('link').addClass('cat_name')
-      .click(function() { $('#cat_' + categoryResult.category.key).slideToggle(); })
+      .click(function() { $('#' + ResultsList.getCategoryDivId(categoryResult.category)).slideToggle(); })
       .text(categoryResult.category.name));
   
   var table = new$('table').addClass('results')
@@ -33,10 +33,14 @@ ResultsList.prototype.printCategoryResults = function(categoryResult) {
     table.append(this.printTeamResult(categoryResult.category, categoryResult.teams[j], j+1));
   }
   
-  new$('div').attr('id', 'cat_' + categoryResult.category.key).addClass('cat_results')
+  new$('div').attr('id', ResultsList.getCategoryDivId(categoryResult.category)).addClass('cat_results')
     .append(table)
     .appendTo(li);
   return li;
+};
+
+ResultsList.getCategoryDivId = function (category) {
+  return 'cat_' + category.key;
 };
 
 ResultsList.prototype.printTeamResult = function(category, teamResult, place) {
