@@ -67,6 +67,7 @@ function createEventLink(i) {
     .attr('href', '#' + page)
     .click(function() {
       loadEvent(page);
+      updateLocation(page)
     });
   return new$('li').append(a);
 }
