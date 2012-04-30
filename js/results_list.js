@@ -25,6 +25,7 @@ ResultsList.prototype.printCategoryResults = function(categoryResult) {
   
   var table = new$('table').addClass('results')
     .append(new$('th').text('#'))
+    .append(new$('th').text('№'))
     .append(new$('th').text('Команда'))
     .append(new$('th').text('Очки'))
     .append(new$('th').text('Время'));
@@ -43,25 +44,30 @@ ResultsList.getCategoryDivId = function (categoryKey) {
   return 'cat_' + categoryKey;
 };
 
-ResultsList.getTeamResultDivId = function (categoryKey, place) {
-  return categoryKey + "/" + place;
+ResultsList.getTeamResultDivId = function (categoryKey, teamId) {
+  return categoryKey + "/" + teamId;
 };
 
-ResultsList.prototype.showRoute = function(categoryKey, routePlace) {
+ResultsList.prototype.showRoute = function(categoryKey, teamId) {
   var groupForCategoryKey = Event.CURRENT.findGroupForCategoryKey(categoryKey);
   if (groupForCategoryKey != null && groupForCategoryKey.key != MAP.categoriesControl.currentCategory) {
     MAP.categoriesControl.selectCategory('all');
   }
-  var teamResult = this.findTeamResultByPlace(categoryKey, routePlace);
+  var teamResult = this.findTeamResultByTeamId(categoryKey, teamId);
   MAP.showRoute(teamResult.checkpoints);
-  this.highlightSelected($(get$(ResultsList.getTeamResultDivId(categoryKey, routePlace))));
-  updateLocation(Event.CURRENT.key, categoryKey, routePlace);
+  this.highlightSelected($(get$(ResultsList.getTeamResultDivId(categoryKey, teamId))));
+  updateLocation(Event.CURRENT.key, categoryKey, teamId);
 };
 
-ResultsList.prototype.findTeamResultByPlace = function(categoryKey, place) {
+ResultsList.prototype.findTeamResultByTeamId = function(categoryKey, number) {
   for (var i = 0; i < RESULTS.length; i++) {
     if (RESULTS[i].category.key == categoryKey) {
-      return RESULTS[i].teams[place - 1];
+      var teams = RESULTS[i].teams;
+      for (var j = 0; j < teams.length; j++) {
+        if (teams[j].number == number) {
+          return teams[j];
+        }
+      }
     }
   }
 };
@@ -75,9 +81,10 @@ ResultsList.prototype.printTeamResult = function(category, teamResult, place) {
   var outer = this;
   return new$('tr')
     .append(new$('td').addClass('place').html(place))
-    .append(new$('td').addClass('link').attr('id', ResultsList.getTeamResultDivId(category.key, place))
+    .append(new$('td').addClass('number').html(teamResult.number))
+    .append(new$('td').addClass('link').attr('id', ResultsList.getTeamResultDivId(category.key, teamResult.number))
       .click(function() {
-        outer.showRoute(category.key, place);
+        outer.showRoute(category.key, teamResult.number);
       })
       .html(warn + teamResult.title))
     .append(new$('td').text(teamResult.count))

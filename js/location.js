@@ -25,15 +25,15 @@ function parseLocation() {
   return new Location(event, category, route);
 }
 
-function updateLocation(event, category, place) {
-  Location.CURRENT = new Location(event, category, place);
+function updateLocation(event, category, teamId) {
+  Location.CURRENT = new Location(event, category, teamId);
   var hash = '#';
   if (event) {
     hash += '/' + event;
     if (category) {
       hash += '/' + category;
-      if (place) {
-        hash += '/' + place;
+      if (teamId) {
+        hash += '/' + teamId;
       }
     }
   }
