@@ -4,8 +4,14 @@ function Location(event, category, route) {
   this.route = route;
 }
 
-function parseLocation(location) {
-  var loc = location.hash;
+Location.CURRENT = new Location();
+
+Location.prototype.equals = function (location) {
+  return location.event == this.event && location.category == this.category && location.route == this.route;
+};
+
+function parseLocation() {
+  var loc = document.location.hash;
   if (loc[0] == '#') {
     loc = loc.substr(1); // remove leading hash if exists
   }
@@ -20,5 +26,7 @@ function parseLocation(location) {
 }
 
 function updateLocation(event, category, place) {
+  Location.CURRENT = new Location(event, category, place);
   document.location.hash = '#/' + event + '/' + category + '/' + place;
 }
+

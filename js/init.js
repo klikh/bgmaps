@@ -9,14 +9,16 @@ function initialize() {
   });
 
   $(window).bind('hashchange', function() {
-    loadLocation();
+    var parsedLocation = parseLocation();
+    if (!Location.CURRENT.equals(parsedLocation)) {
+      loadAll(parsedLocation);
+    }
   });
 
-  loadLocation();
+  loadAll(parseLocation());
 }
 
-function loadLocation() {
-  var location = parseLocation(document.location);
+function loadAll(location) {
   var event = loadEvent(location.event, function() {
     if (location.category && event.containsCategory(location.category)) {
       openCategory(location.category);
