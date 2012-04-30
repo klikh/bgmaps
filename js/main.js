@@ -40,7 +40,9 @@ function loadResults(event, callback) {
   $.getJSON('results/' + event + '.js', function(data) {
     RESULTS = eval(data);
     ResultsList.instance.print();
-    callback.call();
+    if (callback) {
+      callback.call();
+    }
   });
 }
 

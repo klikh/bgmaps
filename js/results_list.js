@@ -48,7 +48,8 @@ ResultsList.getTeamResultDivId = function (categoryKey, place) {
 };
 
 ResultsList.prototype.showRoute = function(categoryKey, routePlace) {
-  if (Event.CURRENT.findGroupForCategoryKey(categoryKey).key != MAP.categoriesControl.currentCategory) {
+  var groupForCategoryKey = Event.CURRENT.findGroupForCategoryKey(categoryKey);
+  if (groupForCategoryKey != null && groupForCategoryKey.key != MAP.categoriesControl.currentCategory) {
     MAP.categoriesControl.selectCategory('all');
   }
   var teamResult = this.findTeamResultByPlace(categoryKey, routePlace);
