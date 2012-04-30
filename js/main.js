@@ -18,7 +18,9 @@ function clearAll() {
   $('#checkpoints').empty();
   $('#results').empty();
   MAP.clear();
-  MAP.removeControl(MAP.categoriesControl);
+  if (MAP.categoriesControl) {
+    MAP.controls.remove(MAP.categoriesControl.control);
+  }
 }
 
 function changeHeader(page) {

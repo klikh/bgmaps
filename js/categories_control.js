@@ -9,26 +9,14 @@ function CategoriesControl(categories) {
   this.categories = categories;
   this.currentCategory = 'all';
   this.controlPanels = [];
+
+  this.control = new ymaps.control.Button({
+    data : {
+      content : this.makeControlPanel().context    // using 'context' because we need DOM element, not JQuery
+    }
+  });
+
 }
-
-CategoriesControl.prototype = new GControl();
-
-/**
- * Required by GControl. Called when control is placed on the map by GMap2.addControl().
- * Here we make a control panel and place it on the map.
- */
-CategoriesControl.prototype.initialize = function(map) {
-  var container = this.makeControlPanel().context; // using 'context' because we need DOM element, not JQuery
-  map.getContainer().appendChild(container); 
-  return container;
-};
-
-/**
- * Required by GControl. Called when control is placed on the map by GMap2.addControl().
- */
-CategoriesControl.prototype.getDefaultPosition = function() {
-  return new GControlPosition(G_ANCHOR_TOP_LEFT, new GSize(70, 10));
-};
 
 /**
  * Creates a control panel to filter checkpoints and returns it as a JQuery object
