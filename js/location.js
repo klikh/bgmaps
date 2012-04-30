@@ -27,6 +27,16 @@ function parseLocation() {
 
 function updateLocation(event, category, place) {
   Location.CURRENT = new Location(event, category, place);
-  document.location.hash = '#/' + event + '/' + category + '/' + place;
+  var hash = '#';
+  if (event) {
+    hash += '/' + event;
+    if (category) {
+      hash += '/' + category;
+      if (place) {
+        hash += '/' + place;
+      }
+    }
+  }
+  document.location.hash = hash;
 }
 
