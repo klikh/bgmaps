@@ -54,6 +54,9 @@ ResultsList.prototype.showRoute = function(categoryKey, teamId) {
     MAP.categoriesControl.selectCategory('all');
   }
   var teamResult = this.findTeamResultByTeamId(categoryKey, teamId);
+  if (!teamResult) {
+    return;
+  }
   MAP.showRoute(teamResult.checkpoints);
   this.highlightSelected($(get$(ResultsList.getTeamResultDivId(categoryKey, teamId))));
   updateLocation(Event.CURRENT.key, categoryKey, teamId);
