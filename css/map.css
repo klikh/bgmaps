@@ -1,14 +1,19 @@
 .catControlButton {
   color: DarkBlue;
-  background: white;
   font-weight: normal;
   font-size: 90%;
   margin: 2px;
-  padding: 2px 5px 2px 5px;
   text-align: center;
   cursor: pointer;
   vertical-align: middle;
+}
+
+.mapCatControlButton {
+}
+
+.pageCatControlButton {
   border: 1px dotted black;
+  padding: 2px 5px 2px 5px;
 }
 
 .catControlSelectedButton {
